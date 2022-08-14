@@ -1,58 +1,54 @@
-import { AppWindow } from '../windows';
-import { Dialog } from '.';
-import { ipcMain } from 'electron';
+/* Copyright (c) 2021-2022 SnailDOS */
 
-export class ExtensionPopup extends Dialog {
-  public visible = false;
+import { BrowserWindow } from 'electron';
+import { Application } from '../application';
+import { DIALOG_MARGIN_TOP, DIALOG_MARGIN } from '~/constants/design';
 
-  private height = 512;
+export const showExtensionDialog = (
+  browserWindow: BrowserWindow,
+  x: number,
+  y: number,
+  url: string,
+  inspect = false,
+) => {
+  if (!process.env.ENABLE_EXTENSIONS) return;
 
-  public left = 0;
+  let height = 512;
+  let width = 512;
 
-  private width = 512;
+  const dialog = Application.instance.dialogs.show({
+    name: 'extension-popup',
+    browserWindow,
+    getBounds: () => {
+      return {
+        x: x - width + DIALOG_MARGIN,
+        y: y - DIALOG_MARGIN_TOP,
+        height: Math.min(1024, height),
+        width: Math.min(1024, width),
+      };
+    },
+    onWindowBoundsUpdate: () => dialog.hide(),
+  });
 
-  public url = '';
+  if (!dialog) return;
 
-  constructor(appWindow: AppWindow) {
-    super(appWindow, {
-      name: 'extension-popup',
-      bounds: {
-        width: 512,
-        height: 512,
-        y: 34,
-      },
-      devtools: false,
-      webPreferences: {
-        webviewTag: true,
-      },
-    });
+  dialog.on('bounds', (e, w, h) => {
+    width = w;
+    height = h;
+    dialog.rearrange();
+  });
 
-    ipcMain.on(`bounds-${this.webContents.id}`, (e, width, height) => {
-      this.height = height;
-      this.width = width;
-      this.rearrange();
-    });
-
-    this.webContents.on('will-attach-webview', (e, webPreferences, params) => {
-      webPreferences.additionalArguments = ['--session-id=1'];
+  dialog.browserView.webContents.on(
+    'will-attach-webview',
+    (e, webPreferences, params) => {
       webPreferences.sandbox = true;
       webPreferences.nodeIntegration = false;
       webPreferences.contextIsolation = true;
-    });
-  }
+    },
+  );
 
-  public rearrange() {
-    const { width } = this.appWindow.getContentBounds();
 
-    super.rearrange({
-      x: Math.round(Math.min(this.left - this.width + 6, width - this.width)),
-      height: Math.round(Math.min(1024, this.height)),
-      width: Math.round(Math.min(1024, this.width)),
-    });
-  }
-
-  public show() {
-    super.show();
-    this.webContents.send('visible', true, { url: this.url });
-  }
-}
+  dialog.on('loaded', (e) => {
+    e.reply('data', { url, inspect });
+  });
+};

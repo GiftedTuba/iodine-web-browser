@@ -1,39 +1,48 @@
-import { observable, computed } from 'mobx';
+/* Copyright (c) 2021-2022 SnailDOS */
+
+import { observable, computed, makeObservable } from 'mobx';
 
 import {
   getHistorySuggestions,
   getSearchSuggestions,
 } from '../utils/suggestions';
-import { icons } from '~/renderer/constants/icons';
 import { isURL } from '~/utils';
 import { ISuggestion } from '~/interfaces';
 import { Store } from '.';
+import { ICON_SEARCH, ICON_PAGE } from '~/renderer/constants';
 
 let searchSuggestions: ISuggestion[] = [];
+
+const MAX_SUGGESTIONS_COUNT = 8;
 
 export class SuggestionsStore {
   private store: Store;
 
-  @observable
+  // Observable
   public list: ISuggestion[] = [];
 
-  @observable
   public selected = 0;
 
-  @observable
   public height = 0;
 
-  @computed
+  // Computed
   public get selectedSuggestion() {
-    return this.list.find(x => x.id === this.selected);
+    return this.list.find((x) => x.id === this.selected);
   }
 
   constructor(store: Store) {
+    makeObservable(this, {
+      list: observable,
+      selected: observable,
+      height: observable,
+      selectedSuggestion: computed,
+    });
+
     this.store = store;
   }
 
   public load(input: HTMLInputElement): Promise<string> {
-    return new Promise(async resolve => {
+    return new Promise(async (resolve) => {
       const filter = input.value.substring(0, input.selectionStart);
       const history = getHistorySuggestions(filter);
 
@@ -42,15 +51,15 @@ export class SuggestionsStore {
       for (const item of history) {
         if (!item.isSearch) {
           historySuggestions.push({
-            primaryText: item.url,
-            secondaryText: item.title,
+            primaryText: item.title,
+            url: item.url,
             favicon: item.favicon,
             canSuggest: item.canSuggest,
           });
         } else {
           historySuggestions.push({
             primaryText: item.url,
-            favicon: icons.search,
+            favicon: ICON_SEARCH,
             canSuggest: item.canSuggest,
             isSearch: true,
           });
@@ -62,9 +71,8 @@ export class SuggestionsStore {
       if ((!history[0] || !history[0].canSuggest) && filter.trim() !== '') {
         if (isURL(filter) || filter.indexOf('://') !== -1) {
           historySuggestions.unshift({
-            primaryText: filter,
-            secondaryText: 'open website',
-            favicon: icons.page,
+            url: filter,
+            favicon: ICON_PAGE,
           });
         } else {
           idx = 0;
@@ -73,15 +81,17 @@ export class SuggestionsStore {
 
       historySuggestions.splice(idx, 0, {
         primaryText: filter,
-        secondaryText: `search in ${this.store.searchEngine.name}`,
-        favicon: icons.search,
+        secondaryText: `${this.store.searchEngine.name} Search`,
+        favicon: ICON_SEARCH,
         isSearch: true,
       });
 
       let suggestions: ISuggestion[] =
         input.value === ''
           ? []
-          : historySuggestions.concat(searchSuggestions).slice(0, 5);
+          : historySuggestions
+              .concat(searchSuggestions)
+              .slice(0, MAX_SUGGESTIONS_COUNT);
 
       for (let i = 0; i < suggestions.length; i++) {
         suggestions[i].id = i;
@@ -90,7 +100,7 @@ export class SuggestionsStore {
       this.list = suggestions;
 
       if (historySuggestions.length > 0 && historySuggestions[0].canSuggest) {
-        resolve(historySuggestions[0].primaryText);
+        resolve(historySuggestions[0].url);
       }
 
       try {
@@ -101,7 +111,7 @@ export class SuggestionsStore {
           for (const item of searchData) {
             searchSuggestions.push({
               primaryText: item,
-              favicon: icons.search,
+              favicon: ICON_SEARCH,
               isSearch: true,
             });
           }
@@ -109,7 +119,9 @@ export class SuggestionsStore {
           suggestions =
             input.value === ''
               ? []
-              : historySuggestions.concat(searchSuggestions).slice(0, 5);
+              : historySuggestions
+                  .concat(searchSuggestions)
+                  .slice(0, MAX_SUGGESTIONS_COUNT);
 
           for (let i = 0; i < suggestions.length; i++) {
             suggestions[i].id = i;

@@ -1,5 +1,8 @@
-import { remote, ipcRenderer } from 'electron';
+/* Copyright (c) 2021-2022 SnailDOS */
+
+import { ipcRenderer } from 'electron';
 import { resolve } from 'path';
+import * as remote from '@electron/remote';
 
 const getWebContentsId = () => ipcRenderer.sendSync('get-webcontents-id');
 
@@ -17,18 +20,25 @@ const removeWebview = () => {
   }
 };
 
+const _hide = () => {
+  app.classList.remove('visible');
+  removeWebview();
+};
+
 const hide = () => {
-  if (!visible || !webview) return;
-  ipcRenderer.send(`hide-${getWebContentsId()}`);
+  visible = false;
+  _hide();
+  setTimeout(() => {
+    ipcRenderer.send(`hide-${getWebContentsId()}`);
+  });
 };
 
 const show = () => {
-  if (visible) return;
   app.classList.add('visible');
   visible = true;
 };
 
-const createWebview = (url: string) => {
+const createWebview = (url: string, inspect: boolean) => {
   webview = document.createElement('webview');
 
   webview.setAttribute('partition', 'persist:view');
@@ -46,36 +56,47 @@ const createWebview = (url: string) => {
   webview.style.height = '100%';
 
   webview.addEventListener('dom-ready', () => {
-    webview.getWebContents().addListener('context-menu', (e, params) => {
-      const menu = remote.Menu.buildFromTemplate([
-        {
-          label: 'Inspect element',
-          click: () => {
-            webview.inspectElement(params.x, params.y);
-          },
-        },
-      ]);
+    remote.webContents
+      .fromId(webview.getWebContentsId())
+      .addListener(
+        'context-menu',
+        (e: any, params: { x: number; y: number }) => {
+          const menu = remote.Menu.buildFromTemplate([
+            {
+              label: 'Inspect element',
+              click: () => {
+                webview.inspectElement(params.x, params.y);
+              },
+            },
+          ]);
 
-      menu.popup();
-    });
+          menu.popup();
+        },
+      );
+
+    if (inspect) {
+      webview.openDevTools();
+    }
   });
 
-  webview.addEventListener('ipc-message', e => {
+  webview.addEventListener('ipc-message', (e) => {
     if (e.channel === 'webview-size') {
-      const [width, height] = e.args;
-      container.style.width = (width < 10 ? 200 : width) + 'px';
+      let [width, height] = e.args;
+
+      width = width === 0 ? 1 : width;
+      height = height === 0 ? 1 : height;
+
+      container.style.width = width + 'px';
       container.style.height = height + 'px';
 
-      ipcRenderer.send(`bounds-${getWebContentsId()}`, width + 16, height + 16);
+      ipcRenderer.send(`bounds-${getWebContentsId()}`, width + 32, height + 40);
 
       show();
 
       webview.focus();
     } else if (e.channel === 'webview-blur') {
       if (visible && !webview.isDevToolsOpened()) {
-        setTimeout(() => {
-          hide();
-        });
+        hide();
       }
     }
   });
@@ -83,21 +104,9 @@ const createWebview = (url: string) => {
   container.appendChild(webview);
 };
 
-ipcRenderer.on('visible', (e, flag, data) => {
-  if (flag) {
-    const { url } = data;
-    createWebview(url);
-  } else {
-    visible = false;
-    app.classList.remove('visible');
-    removeWebview();
-  }
+ipcRenderer.on('data', (e, data) => {
+  const { url, inspect } = data;
+  createWebview(url, inspect);
 });
 
-ipcRenderer.on('inspect', () => {
-  if (webview) {
-    webview.addEventListener('dom-ready', () => {
-      webview.openDevTools();
-    });
-  }
-});
+ipcRenderer.send(`loaded-${getWebContentsId()}`);

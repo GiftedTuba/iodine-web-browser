@@ -1,8 +1,16 @@
+/* Copyright (c) 2021-2022 SnailDOS */
+
 import * as React from 'react';
 import { NavigationDrawer } from '../NavigationDrawer';
 import { observer } from 'mobx-react-lite';
-import { icons } from '~/renderer/constants';
-import { WEBUI_BASE_URL, WEBUI_URL_SUFFIX } from '~/constants/files';
+import {
+  ICON_SETTINGS,
+  ICON_HISTORY,
+  ICON_BOOKMARKS,
+  ICON_EXTENSIONS,
+  ICON_DOWNLOAD,
+} from '~/renderer/constants/icons';
+import { getWebUIURL } from '~/common/webui';
 
 const MenuItem = observer(
   ({
@@ -15,12 +23,8 @@ const MenuItem = observer(
     icon?: string;
   }) => (
     <NavigationDrawer.Item
-      onClick={() =>
-        (window.location.href = `${WEBUI_BASE_URL}${name}${WEBUI_URL_SUFFIX}`)
-      }
-      selected={window.location.href.startsWith(
-        `${WEBUI_BASE_URL}${name}${WEBUI_URL_SUFFIX}`,
-      )}
+      onClick={() => (window.location.href = getWebUIURL(name))}
+      selected={window.location.href.startsWith(getWebUIURL(name))}
       icon={icon}
     >
       {children}
@@ -31,21 +35,21 @@ const MenuItem = observer(
 export const GlobalNavigationDrawer = () => {
   return (
     <NavigationDrawer dense title="">
-      <MenuItem name="settings" icon={icons.settings}>
+      <MenuItem name="settings" icon={ICON_SETTINGS}>
         Settings
       </MenuItem>
-      <MenuItem name="history" icon={icons.history}>
+      <MenuItem name="history" icon={ICON_HISTORY}>
         History
       </MenuItem>
-      <MenuItem name="bookmarks" icon={icons.bookmarks}>
+      <MenuItem name="bookmarks" icon={ICON_BOOKMARKS}>
         Bookmarks
       </MenuItem>
-      <MenuItem name="downloads" icon={icons.download}>
+      {/* <MenuItem name="downloads" icon={ICON_DOWNLOAD}>
         Downloads
       </MenuItem>
-      <MenuItem name="extensions" icon={icons.extensions}>
+      <MenuItem name="extensions" icon={ICON_EXTENSIONS}>
         Extensions
-      </MenuItem>
+      </MenuItem> */}
     </NavigationDrawer>
   );
 };

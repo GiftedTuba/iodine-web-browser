@@ -1,3 +1,5 @@
+/* Copyright (c) 2021-2022 SnailDOS */
+
 import * as React from 'react';
 import { observer } from 'mobx-react-lite';
 
@@ -6,9 +8,9 @@ import { IHistoryItem } from '~/interfaces';
 import { ListItem } from '~/renderer/components/ListItem';
 import { formatTime } from '../../utils';
 import store from '../../store';
-import { icons } from '~/renderer/constants';
+import { ICON_PAGE } from '~/renderer/constants/icons';
 
-const onClick = (item: IHistoryItem) => (e: React.MouseEvent) => {
+const onClick = (item: IHistoryItem) => () => {
   const index = store.selectedItems.indexOf(item._id);
 
   if (index === -1) {
@@ -18,12 +20,14 @@ const onClick = (item: IHistoryItem) => (e: React.MouseEvent) => {
   }
 };
 
-const onRemoveClick = (item: IHistoryItem) => (e: React.MouseEvent) => {
+const onRemoveClick = (item: IHistoryItem) => (
+  e: React.MouseEvent<HTMLDivElement>,
+) => {
   e.stopPropagation();
   store.removeItems([item._id]);
 };
 
-const onTitleClick = (e: React.MouseEvent) => {
+const onTitleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
   e.stopPropagation();
 };
 
@@ -34,7 +38,7 @@ export default observer(({ data }: { data: IHistoryItem }) => {
   let customFavicon = false;
 
   if (favicon == null || favicon.trim() === '') {
-    favicon = icons.page;
+    favicon = ICON_PAGE;
   } else {
     favicon = store.favicons.get(data.favicon);
     customFavicon = true;

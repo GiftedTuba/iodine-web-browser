@@ -1,3 +1,5 @@
+/* Copyright (c) 2021-2022 SnailDOS */
+
 export const monthsList = [
   'January',
   'February',
@@ -14,11 +16,11 @@ export const monthsList = [
 ];
 
 export const daysList = [
-  'Sunday',
   'Monday',
   'Tuesday',
   'Wednesday',
   'Thursday',
   'Friday',
   'Saturday',
+  'Sunday',
 ];

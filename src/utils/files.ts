@@ -1,3 +1,5 @@
+/* Copyright (c) 2021-2022 SnailDOS */
+
 import { DIRECTORIES, FILES } from '~/constants/files';
 import { getPath } from '.';
 import { mkdirSync, existsSync, writeFileSync, stat } from 'fs';
@@ -10,7 +12,7 @@ export const checkFiles = () => {
     }
   }
 
-  Object.keys(FILES).forEach(key => {
+  Object.keys(FILES).forEach((key) => {
     const defaultContent = (FILES as any)[key];
     const path = getPath(key);
 
@@ -21,8 +23,8 @@ export const checkFiles = () => {
 };
 
 export const pathExists = (path: string) => {
-  return new Promise(resolve => {
-    stat(path, error => {
+  return new Promise((resolve) => {
+    stat(path, (error) => {
       resolve(!error);
     });
   });

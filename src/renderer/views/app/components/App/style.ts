@@ -1,3 +1,5 @@
+/* Copyright (c) 2021-2022 SnailDOS */
+
 import styled, { css } from 'styled-components';
 
 import { ITheme } from '~/interfaces';
@@ -5,20 +7,13 @@ import { ITheme } from '~/interfaces';
 export const Line = styled.div`
   height: 1px;
   width: 100%;
-  z-index: 2;
+  z-index: 100;
   position: relative;
-
-  ${({ theme }: { theme: ITheme }) => css`
-    background-color: ${theme['toolbar.bottomLine.backgroundColor']};
-  `}
+  background-color: black;
 `;
 
 export const StyledApp = styled.div`
   display: flex;
   flex-flow: column;
-  height: 100vh;
-
-  ${({ theme }: { theme: ITheme }) => css`
-    background-color: ${theme.backgroundColor};
-  `}
+  background-color: #fff;
 `;

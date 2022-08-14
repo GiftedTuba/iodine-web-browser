@@ -1,4 +1,4 @@
-import parse from 'node-bookmarks-parser';
+/* Copyright (c) 2021-2022 SnailDOS */
 
 import { IBookmark } from '~/interfaces';
 import store from '../store';
@@ -21,10 +21,7 @@ export const getBookmarkTitle = (item: IBookmark) => {
   return '';
 };
 
-export const addImported = async (
-  arr: ReturnType<typeof parse>,
-  parent: IBookmark = null,
-) => {
+export const addImported = async (arr: any[], parent: IBookmark = null) => {
   let order = 0;
 
   for (const item of arr) {
@@ -32,9 +29,9 @@ export const addImported = async (
       let folder: IBookmark = null;
 
       if (item.nsRoot === 'toolbar') {
-        folder = store.list.find(x => x.static === 'main');
+        folder = store.list.find((x) => x.static === 'main');
       } else {
-        folder = store.list.find(x => x.static === 'other');
+        folder = store.list.find((x) => x.static === 'other');
       }
 
       if (folder) {

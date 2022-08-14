@@ -1,19 +1,38 @@
+/* Copyright (c) 2021-2022 SnailDOS */
+
 import { autoUpdater } from 'electron-updater';
 import { ipcMain } from 'electron';
-import { WindowsManager } from '../windows-manager';
+import { Application } from '../application';
 
-export const runAutoUpdaterService = (windowsManager: WindowsManager) => {
-  ipcMain.on('update-install', () => {
-    autoUpdater.quitAndInstall();
+export const runAutoUpdaterService = () => {
+  let updateAvailable = false;
+
+  ipcMain.on('install-update', () => {
+    if (process.env.NODE_ENV !== 'development') {
+      autoUpdater.quitAndInstall(true, true);
+    }
   });
 
-  ipcMain.on('update-check', () => {
-    autoUpdater.checkForUpdates();
+  ipcMain.handle('is-update-available', () => {
+    return updateAvailable;
   });
 
-  autoUpdater.on('update-downloaded', ({ version }) => {
-    for (const window of windowsManager.list) {
-      window.webContents.send('update-available', version);
+  ipcMain.on('update-check', async () => {
+    try {
+      await autoUpdater.checkForUpdates();
+    } catch (e) {
+      console.error(e);
+    }
+  });
+
+  autoUpdater.on('update-downloaded', () => {
+    updateAvailable = true;
+
+    for (const window of Application.instance.windows.list) {
+      window.send('update-available');
+      Application.instance.dialogs
+        .getDynamic('menu')
+        ?.browserView?.webContents?.send('update-available');
     }
   });
 };

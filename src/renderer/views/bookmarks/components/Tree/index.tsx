@@ -1,3 +1,5 @@
+/* Copyright (c) 2021-2022 SnailDOS */
+
 import * as React from 'react';
 import { observer } from 'mobx-react-lite';
 
@@ -9,8 +11,8 @@ export default observer(() => {
   return (
     <StyledTreeView>
       {store.list
-        .filter(r => r.parent == null)
-        .map(item => (
+        .filter((r) => r.parent == null)
+        .map((item) => (
           <TreeItem key={item._id} data={item} depth={0} />
         ))}
     </StyledTreeView>

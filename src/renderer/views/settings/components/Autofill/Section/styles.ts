@@ -1,6 +1,8 @@
+/* Copyright (c) 2021-2022 SnailDOS */
+
 import styled, { css } from 'styled-components';
 import { centerIcon } from '~/renderer/mixins';
-import { icons, transparency } from '~/renderer/constants';
+import { transparency, ICON_DROPDOWN } from '~/renderer/constants';
 import { ITheme } from '~/interfaces';
 
 export const StyledSection = styled.div`
@@ -44,7 +46,7 @@ export const Label = styled.div`
 export const DropIcon = styled.div`
   width: 20px;
   height: 20px;
-  background-image: url(${icons.dropDown});
+  background-image: url(${ICON_DROPDOWN});
   opacity: ${transparency.icons.inactive};
   margin-left: auto;
   margin-right: 16px;

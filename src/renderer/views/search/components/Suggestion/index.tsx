@@ -1,18 +1,25 @@
+/* Copyright (c) 2021-2022 SnailDOS */
+
 import { observer } from 'mobx-react-lite';
 import * as React from 'react';
 
-import { transparency, icons } from '~/renderer/constants';
+import { transparency, ICON_PAGE, ICON_SEARCH } from '~/renderer/constants';
 import {
   StyledSuggestion,
   PrimaryText,
   Dash,
   SecondaryText,
   Icon,
+  Url,
 } from './style';
 import { ISuggestion } from '~/interfaces';
 import store from '../../store';
 import { ipcRenderer } from 'electron';
+import { IconProp } from '@fortawesome/fontawesome-svg-core';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { callViewMethod } from '~/utils/view';
+import { IconProp } from '@fortawesome/fontawesome-svg-core';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 interface Props {
   suggestion: ISuggestion;
@@ -27,7 +34,7 @@ const onMouseLeave = (suggestion: ISuggestion) => () => {
 };
 
 const onClick = (suggestion: ISuggestion) => () => {
-  let url = suggestion.primaryText;
+  let url = suggestion.isSearch ? suggestion.primaryText : suggestion.url;
 
   if (suggestion.isSearch) {
     url = store.searchEngine.url.replace('%s', url);
@@ -37,24 +44,25 @@ const onClick = (suggestion: ISuggestion) => () => {
 
   callViewMethod(store.tabId, 'loadURL', url);
 
-  setTimeout(() => {
-    ipcRenderer.send(`hide-${store.id}`);
-  });
+  store.hide();
 };
 
 export const Suggestion = observer(({ suggestion }: Props) => {
   const { hovered } = suggestion;
-  const { primaryText, secondaryText } = suggestion;
+  const { primaryText, secondaryText, url } = suggestion;
 
   const selected = store.suggestions.selected === suggestion.id;
 
   let { favicon } = suggestion;
 
-  if (favicon == null || favicon.trim() === '') {
-    favicon = icons.page;
+  if (
+    favicon == null ||
+    (typeof favicon === 'string' && favicon.trim() === '')
+  ) {
+    favicon = ICON_PAGE;
   }
 
-  const customFavicon = favicon !== icons.page && favicon !== icons.search;
+  const customFavicon = favicon !== ICON_PAGE && favicon !== ICON_SEARCH;
 
   return (
     <StyledSuggestion
@@ -64,20 +72,26 @@ export const Suggestion = observer(({ suggestion }: Props) => {
       onMouseEnter={onMouseEnter(suggestion)}
       onMouseLeave={onMouseLeave(suggestion)}
     >
-      <Icon
-        style={{
-          backgroundImage: `url(${favicon})`,
-          opacity: customFavicon ? 1 : transparency.icons.inactive,
-          filter: !customFavicon
-            ? store.theme['searchBox.suggestions.lightForeground']
-              ? 'invert(100%)'
-              : 'none'
-            : 'none',
-        }}
-      />
-      <PrimaryText>{primaryText}</PrimaryText>
-      {primaryText != null && secondaryText != null && <Dash>&mdash;</Dash>}
-      <SecondaryText>{secondaryText}</SecondaryText>
+{typeof favicon === 'string' ? (
+        <Icon
+          style={{
+            backgroundImage: `url(${favicon})`,
+            opacity: customFavicon ? 1 : transparency.icons.inactive,
+            filter: !customFavicon
+              ? store.theme['searchBox.lightForeground']
+                ? 'invert(100%)'
+                : 'none'
+              : 'none',
+          }}
+        />
+      ) : (
+        <Icon>
+          <FontAwesomeIcon icon={favicon} fixedWidth />
+        </Icon>
+      )}
+      {primaryText && <PrimaryText>{primaryText}</PrimaryText>}
+      {primaryText && (secondaryText || url) && <Dash>&ndash;</Dash>}
+      {url ? <Url>{url}</Url> : <SecondaryText>{secondaryText}</SecondaryText>}
     </StyledSuggestion>
   );
 });

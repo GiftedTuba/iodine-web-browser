@@ -1,3 +1,5 @@
+/* Copyright (c) 2021-2022 SnailDOS */
+
 import { makeId } from '~/utils/string';
 
 interface IAction<T> {
@@ -8,7 +10,7 @@ interface IAction<T> {
 }
 
 export class PreloadDatabase<T> {
-  private scope: string;
+  private readonly scope: string;
 
   public constructor(scope: string) {
     this.scope = scope;
@@ -18,7 +20,7 @@ export class PreloadDatabase<T> {
     operation: 'get' | 'get-one' | 'update' | 'insert' | 'remove',
     data: IAction<T>,
   ): Promise<any> {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       const id = makeId(32);
 
       window.postMessage(
@@ -32,7 +34,7 @@ export class PreloadDatabase<T> {
         '*',
       );
 
-      window.addEventListener('message', e => {
+      window.addEventListener('message', (e) => {
         const { data } = e;
 
         if (data.type === 'result' && data.id === id) {

@@ -3,65 +3,81 @@ const {
   getConfig,
   applyEntries,
   getBaseConfig,
+  dev,
 } = require('./webpack.config.base');
 const { join } = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
+const webpack = require('webpack');
+const NodePolyfillPlugin = require("node-polyfill-webpack-plugin");
 /* eslint-enable */
 
 const PORT = 4444;
 
 const appConfig = getConfig(getBaseConfig('app'), {
-  target: 'electron-renderer',
-
+  target: 'web',
   devServer: {
-    contentBase: join(__dirname, 'build'),
+    static: {
+      directory: join(__dirname, 'build'),
+    },
     port: PORT,
     hot: true,
-    inline: true,
-    disableHostCheck: true,
+    allowedHosts: 'all',
   },
+
+  plugins: dev
+  ? [
+      new NodePolyfillPlugin({excludeAliases: ['process']}),
+      new webpack.HotModuleReplacementPlugin(),
+      new ReactRefreshWebpackPlugin(),
+    ]
+  : [],
 });
 
 const extPopupConfig = getConfig({
-  target: 'electron-renderer',
+  target: 'web',
 
   entry: {},
   output: {},
-
-  devServer: {
-    contentBase: join(__dirname, 'build'),
-    port: PORT,
-    hot: true,
-    inline: true,
-    disableHostCheck: true,
-  },
 });
 
-applyEntries('app', appConfig, [
+applyEntries(appConfig, [
+  ...(process.env.ENABLE_AUTOFILL ? ['form-fill', 'credentials'] : []),
   'app',
   'permissions',
   'auth',
-  'form-fill',
-  'credentials',
   'find',
   'menu',
   'search',
+  'menuExtra',
+  'incognitoMenu',
+  'welcome',
+  'changelog',
   'preview',
   'tabgroup',
-  'downloads',
+  'downloads-dialog',
   'add-bookmark',
+  'zoom',
+  'settings',
+  'history',
+  'newtab',
+  'bookmarks',
 ]);
 
-extPopupConfig.entry['extension-popup'] = [
-  `./src/renderer/views/extension-popup`,
-];
-extPopupConfig.plugins.push(
-  new HtmlWebpackPlugin({
-    title: 'Midori Next',
-    template: 'static/pages/extension-popup.html',
-    filename: `extension-popup.html`,
-    chunks: [`vendor.app`, 'extension-popup'],
-  }),
-);
+if (process.env.ENABLE_EXTENSIONS) {
+  extPopupConfig.entry['extension-popup'] = [
+    `./src/renderer/views/extension-popup`,
+  ];
+  extPopupConfig.plugins.push(
+    new HtmlWebpackPlugin({
+      title: 'Midori',
+      template: 'static/pages/extension-popup.html',
+      filename: `extension-popup.html`,
+      chunks: [`vendor.app`, 'extension-popup'],
+    }),
+  );
 
-module.exports = [appConfig, extPopupConfig];
+  module.exports = [appConfig, extPopupConfig];
+} else {
+  module.exports = appConfig;
+}

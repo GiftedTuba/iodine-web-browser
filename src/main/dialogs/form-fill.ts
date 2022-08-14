@@ -1,12 +1,13 @@
-import { TOOLBAR_HEIGHT } from '~/constants/design';
-import { Dialog } from './dialog';
+/* Copyright (c) 2021-2022 SnailDOS */
+
+import { VIEW_Y_OFFSET, DIALOG_MARGIN_TOP } from '~/constants/design';
 import { AppWindow } from '../windows';
+import {PersistentDialog} from "~/main/dialogs/dialog";
 
 const WIDTH = 208;
 const HEIGHT = 128;
-const MARGIN = 8;
 
-export class FormFillDialog extends Dialog {
+export class FormFillDialog extends PersistentDialog {
   public inputRect = {
     width: 0,
     height: 0,
@@ -14,8 +15,8 @@ export class FormFillDialog extends Dialog {
     y: 0,
   };
 
-  public constructor(appWindow: AppWindow) {
-    super(appWindow, {
+  public constructor() {
+    super({
       name: 'form-fill',
       bounds: {
         height: HEIGHT,
@@ -27,7 +28,12 @@ export class FormFillDialog extends Dialog {
   public rearrange() {
     super.rearrange({
       x: this.inputRect.x - 8,
-      y: this.inputRect.y + this.inputRect.height + TOOLBAR_HEIGHT - MARGIN + 2,
+      y:
+        this.inputRect.y +
+        this.inputRect.height +
+        VIEW_Y_OFFSET -
+        DIALOG_MARGIN_TOP +
+        2,
     });
   }
 
@@ -35,7 +41,7 @@ export class FormFillDialog extends Dialog {
     const itemHeight = hasSubtext ? 56 : 32;
     super.rearrange({
       width: WIDTH,
-      height: count * itemHeight + MARGIN * 2 + 16,
+      height: count * itemHeight + DIALOG_MARGIN_TOP * 2 + 16,
     });
   }
 }

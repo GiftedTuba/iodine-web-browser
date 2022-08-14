@@ -1,4 +1,6 @@
-import { observable } from 'mobx';
+/* Copyright (c) 2021-2022 SnailDOS */
+
+import { makeObservable, observable } from 'mobx';
 
 import { IStartupTab } from '~/interfaces/startup-tab';
 import { PreloadDatabase } from '~/preloads/models/database';
@@ -8,8 +10,13 @@ export class StartupTabsStore {
 
   public isLoaded = false;
 
-  @observable
   public list: IStartupTab[] = [];
+
+  constructor() {
+    makeObservable(this, {
+      list: observable,
+    });
+  }
 
   public async load() {
     if (this.isLoaded) return;
@@ -20,17 +27,17 @@ export class StartupTabsStore {
 
   public async addStartupDefaultTabItems(items: IStartupTab[]) {
     this.db.remove({ isUserDefined: true }, true);
-    this.list = this.list.filter(x => !x.isUserDefined);
+    this.list = this.list.filter((x) => !x.isUserDefined);
     items
-      .filter(x => x.url !== undefined && x.url.length > 1)
-      .forEach(async x => {
+      .filter((x) => x.url !== undefined && x.url.length > 1)
+      .forEach(async (x) => {
         this.list.push(await this.db.insert(x));
       });
   }
 
   public clearUserDefined() {
     this.db.remove({ isUserDefined: true }, true);
-    this.list = this.list.filter(x => !x.isUserDefined);
+    this.list = this.list.filter((x) => !x.isUserDefined);
   }
 
   public clearStartupTabs(removePinned: boolean, removeUserDefined: boolean) {
@@ -39,13 +46,13 @@ export class StartupTabsStore {
       this.list = [];
     } else if (!removePinned) {
       this.db.remove({ pinned: false }, true);
-      this.list = this.list.filter(x => x.pinned);
+      this.list = this.list.filter((x) => x.pinned);
     } else if (!removeUserDefined) {
       this.db.remove({ isUserDefined: false }, true);
-      this.list = this.list.filter(x => x.isUserDefined);
+      this.list = this.list.filter((x) => x.isUserDefined);
     } else {
       this.db.remove({ isUserDefined: false, pinned: false }, true);
-      this.list = this.list.filter(x => x.isUserDefined || x.pinned);
+      this.list = this.list.filter((x) => x.isUserDefined || x.pinned);
     }
   }
 }

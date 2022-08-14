@@ -1,10 +1,11 @@
-import { ipcMain, dialog } from 'electron';
-import * as Datastore from 'nedb';
-import { fromBuffer } from 'file-type';
-import * as icojs from 'icojs';
-import parse = require('node-bookmarks-parser');
+/* Copyright (c) 2021-2022 SnailDOS */
 
-import { getPath, requestURL } from '~/utils';
+import { ipcMain, dialog, app } from 'electron';
+import * as Datastore from '@seald-io/nedb';
+import { fileTypeFromBuffer } from 'file-type';
+import * as icojs from 'icojs';
+const fs = require('fs')
+import { getPath } from '~/utils';
 import {
   IFindOperation,
   IInsertOperation,
@@ -16,10 +17,14 @@ import {
   IBookmark,
 } from '~/interfaces';
 import { countVisitedTimes } from '~/utils/history';
-import { windowsManager } from '..';
 import { promises } from 'fs';
+import { Application } from '../application';
+import { requestURL } from '../network/request';
+import * as parse from 'node-bookmarks-parser';
+import { Settings } from '../models/settings';
 
 interface Databases {
+  // @ts-ignore
   [key: string]: Datastore;
 }
 
@@ -42,6 +47,8 @@ const indentLength = 4;
 const indentType = ' ';
 
 export class StorageService {
+  public settings: Settings;
+
   public databases: Databases = {
     favicons: null,
     bookmarks: null,
@@ -57,67 +64,61 @@ export class StorageService {
 
   public historyVisited: IVisitedItem[] = [];
 
-  public favicons: Map<string, string> = new Map();
+  public favicons: Map<any, any> = new Map();
 
-  public constructor() {
-    ipcMain.on('storage-get', async (e, id: string, data: IFindOperation) => {
-      const docs = await this.find(data);
-      e.sender.send(id, docs);
+  public constructor(settings: Settings) {
+    this.settings = settings;
+
+    ipcMain.handle('storage-get', async (e, data: IFindOperation) => {
+      return await this.find(data);
     });
 
-    ipcMain.on(
-      'storage-get-one',
-      async (e, id: string, data: IFindOperation) => {
-        const doc = await this.findOne(data);
-        e.sender.send(id, doc);
-      },
-    );
+    ipcMain.handle('storage-get-one', async (e, data: IFindOperation) => {
+      return await this.findOne(data);
+    });
 
-    ipcMain.on(
-      'storage-insert',
-      async (e, id: string, data: IInsertOperation) => {
-        const doc = await this.insert(data);
-        e.sender.send(id, doc);
-      },
-    );
+    ipcMain.handle('storage-insert', async (e, data: IInsertOperation) => {
+      return await this.insert(data);
+    });
 
-    ipcMain.on(
-      'storage-remove',
-      async (e, id: string, data: IRemoveOperation) => {
-        const numRemoved = await this.remove(data);
-        e.sender.send(id, numRemoved);
-      },
-    );
+    ipcMain.handle('storage-remove', async (e, data: IRemoveOperation) => {
+      return await this.remove(data);
+    });
 
-    ipcMain.on(
-      'storage-update',
-      async (e, id: string, data: IUpdateOperation) => {
-        const numReplaced = await this.update(data);
-        e.sender.send(id, numReplaced);
-      },
-    );
+    ipcMain.handle('storage-update', async (e, data: IUpdateOperation) => {
+      return await this.update(data);
+    });
 
     ipcMain.handle('import-bookmarks', async () => {
-      const b = await this.importBookmarks();
-
-      windowsManager.list.forEach(x => {
-        x.viewManager.selected.updateBookmark();
+      const dialogRes = await dialog.showOpenDialog({
+        filters: [{ name: 'Bookmark file', extensions: ['html'] }],
       });
 
-      return b;
+      try {
+        const file = await promises.readFile(dialogRes.filePaths[0], 'utf8');
+        return parse(file);
+      } catch (err) {
+        console.error(err);
+      }
+
+      return [];
     });
 
     ipcMain.handle('export-bookmarks', async () => {
       await this.exportBookmarks();
     });
 
-    ipcMain.handle('bookmarks-get', e => {
+    ipcMain.handle('bookmarks-get', () => {
       return this.bookmarks;
     });
 
+    ipcMain.handle('bookmarks-sync', async () => {
+      await this.loadBookmarks();
+    });
+
     ipcMain.on('bookmarks-remove', (e, ids: string[]) => {
-      ids.forEach(x => this.removeBookmark(x));
-      windowsManager.list.forEach(x => {
+      ids.forEach((x) => this.removeBookmark(x));
+      Application.instance.windows.list.forEach((x) => {
         x.viewManager.selected.updateBookmark();
       });
     });
@@ -125,34 +126,71 @@ export class StorageService {
     ipcMain.handle('bookmarks-add', async (e, item) => {
       const b = await this.addBookmark(item);
 
-      windowsManager.list.forEach(x => {
+      Application.instance.windows.list.forEach((x) => {
         x.viewManager.selected.updateBookmark();
       });
 
       return b;
     });
 
-    ipcMain.handle('bookmarks-get-folders', async e => {
-      return this.bookmarks.filter(x => x.isFolder);
+    ipcMain.handle('bookmarks-get-folders', async () => {
+      return this.bookmarks.filter((x) => x.isFolder);
     });
 
     ipcMain.on('bookmarks-update', async (e, id, change) => {
       await this.updateBookmark(id, change);
     });
 
-    ipcMain.handle('history-get', e => {
+    ipcMain.handle('history-get', () => {
       return this.history;
     });
 
     ipcMain.on('history-remove', (e, ids: string[]) => {
-      this.history = this.history.filter(x => ids.indexOf(x._id) === -1);
-      ids.forEach(x => this.remove({ scope: 'history', query: { _id: x } }));
+      this.history = this.history.filter((x) => ids.indexOf(x._id) === -1);
+      ids.forEach((x) => this.remove({ scope: 'history', query: { _id: x } }));
     });
 
     ipcMain.handle('topsites-get', (e, count) => {
       return this.historyVisited
-        .filter(x => x.title && x.title !== '')
+        .filter((x) => x.title && x.title !== '')
         .slice(0, count);
+    });
+
+    ipcMain.handle('history-unlink', () => {
+      const apppath = app.getPath('userData')
+      fs.unlinkSync(apppath + "\\storage\\history.db");
+      fs.unlinkSync(apppath + "\\storage\\startuptabs.db");
+      dialog.showMessageBoxSync(null, {
+        type: 'warning',
+        title: `Clear History`,
+        message: `Succesfully erased History`,
+        detail: `Typically to regenerate newtab entries, you should restart the browser, however it is optional.`,
+        buttons: ['Ok'],
+      });
+    });
+
+    ipcMain.handle('favicon-unlink', () => {
+      const apppath = app.getPath('userData')
+      fs.unlinkSync(apppath + "\\storage\\favicons.db");
+      dialog.showMessageBoxSync(null, {
+        type: 'info',
+        title: `Clear Favicon`,
+        message: `Succesfully erased Favicon Database`,
+        detail: `The Favicon database for all websites have been cleared. This database will regenerate upon first website loads.`,
+        buttons: ['Ok'],
+      });
+    });
+
+    ipcMain.handle('permission-unlink', () => {
+      const apppath = app.getPath('userData')
+      fs.unlinkSync(apppath + "\\storage\\permissions.db");
+      dialog.showMessageBoxSync(null, {
+        type: 'warning',
+        title: `Clear Permissions`,
+        message: `Succesfully erased Permission Database`,
+        detail: `The Permision database for all websites have been cleared. Midori needs to be restarted to accept or deny permission requests.`,
+        buttons: ['Ok'],
+      });
     });
   }
 
@@ -224,15 +262,14 @@ export class StorageService {
     for (const key in this.databases) {
       this.databases[key] = this.createDatabase(key.toLowerCase());
     }
-
-    this.loadBookmarks();
+    await this.loadBookmarks();
     await this.loadFavicons();
-    this.loadHistory();
+    await this.loadHistory();
   }
 
   private async loadFavicons() {
     (await this.find<IFavicon>({ scope: 'favicons', query: {} })).forEach(
-      favicon => {
+      (favicon) => {
         const { data } = favicon;
 
         if (this.favicons.get(favicon.url) == null) {
@@ -264,20 +301,20 @@ export class StorageService {
 
     this.historyVisited = countVisitedTimes(items);
 
-    this.historyVisited = this.historyVisited.map(x => ({
+    this.historyVisited = this.historyVisited.map((x) => ({
       ...x,
       favicon: this.favicons.get(x.favicon),
     }));
   }
 
   private async loadBookmarks() {
-    const items = await this.find<IBookmark>({ scope: 'bookmarks', query: {} });
+    let items = await this.find<IBookmark>({ scope: 'bookmarks', query: {} });
 
     items.sort((a, b) => a.order - b.order);
 
-    let barFolder = items.find(x => x.static === 'main');
-    let otherFolder = items.find(x => x.static === 'other');
-    let mobileFolder = items.find(x => x.static === 'mobile');
+    let barFolder = items.find((x) => x.static === 'main');
+    let otherFolder = items.find((x) => x.static === 'other');
+    let mobileFolder = items.find((x) => x.static === 'mobile');
 
     this.bookmarks = items;
 
@@ -295,50 +332,55 @@ export class StorageService {
     }
 
     if (!otherFolder) {
-      otherFolder = await this.addBookmark({
+      await this.addBookmark({
         static: 'other',
         isFolder: true,
       });
     }
 
     if (!mobileFolder) {
-      mobileFolder = await this.addBookmark({
+      await this.addBookmark({
         static: 'mobile',
         isFolder: true,
       });
     }
   }
 
-  public removeBookmark(id: string) {
-    const item = this.bookmarks.find(x => x._id === id);
+  public async removeBookmark(id: string) {
+    const item = this.bookmarks.find((x) => x._id === id);
 
     if (!item) return;
 
-    this.bookmarks = this.bookmarks.filter(x => x._id !== id);
-    const parent = this.bookmarks.find(x => x._id === item.parent);
+    this.bookmarks = this.bookmarks.filter((x) => x._id !== id);
+    const parent = this.bookmarks.find((x) => x._id === item.parent);
 
-    parent.children = parent.children.filter(x => x !== id);
-    this.updateBookmark(item.parent, { children: parent.children });
+    parent.children = parent.children.filter((x) => x !== id);
+    await this.updateBookmark(item.parent, { children: parent.children });
 
-    this.remove({ scope: 'bookmarks', query: { _id: id } });
+    await this.remove({ scope: 'bookmarks', query: { _id: id } });
 
     if (item.isFolder) {
-      this.bookmarks = this.bookmarks.filter(x => x.parent !== id);
-      const removed = this.bookmarks.filter(x => x.parent === id);
+      this.bookmarks = this.bookmarks.filter((x) => x.parent !== id);
+      const removed = this.bookmarks.filter((x) => x.parent === id);
 
-      this.remove({ scope: 'bookmarks', query: { parent: id }, multi: true });
+      await this.remove({
+        scope: 'bookmarks',
+        query: { parent: id },
+        multi: true,
+      });
 
       for (const i of removed) {
         if (i.isFolder) {
-          this.removeBookmark(i._id);
+          await this.removeBookmark(i._id);
         }
       }
     }
+    Application.instance.windows.broadcast('reload-bookmarks');
   }
 
   public async updateBookmark(id: string, change: IBookmark) {
     const index = this.bookmarks.indexOf(
-      this.bookmarks.find(x => x._id === id),
+      this.bookmarks.find((x) => x._id === id),
     );
     this.bookmarks[index] = { ...this.bookmarks[index], ...change };
 
@@ -347,6 +389,16 @@ export class StorageService {
       query: { _id: id },
       value: change,
     });
+
+    if (change.parent) {
+      const parent = this.bookmarks.find((x) => x._id === change.parent);
+      if (!parent.children.includes(change._id))
+        await this.updateBookmark(parent._id, {
+          children: [...parent.children, change._id],
+        });
+    }
+
+    Application.instance.windows.broadcast('reload-bookmarks');
   }
 
   public async addBookmark(item: IBookmark): Promise<IBookmark> {
@@ -360,16 +412,17 @@ export class StorageService {
 
     if (item.isFolder) {
       item.children = item.children || [];
+    } else {
     }
 
     if (item.order === undefined) {
-      item.order = this.bookmarks.filter(x => x.parent === null).length;
+      item.order = this.bookmarks.filter((x) => !Boolean(x.static)).length;
     }
 
     const doc = await this.insert<IBookmark>({ item, scope: 'bookmarks' });
 
     if (item.parent) {
-      const parent = this.bookmarks.find(x => x._id === item.parent);
+      const parent = this.bookmarks.find((x) => x._id === item.parent);
       await this.updateBookmark(parent._id, {
         children: [...parent.children, doc._id],
       });
@@ -377,10 +430,14 @@ export class StorageService {
 
     this.bookmarks.push(doc);
 
+    Application.instance.windows.broadcast('reload-bookmarks');
+
     return doc;
   }
 
   private createDatabase = (name: string) => {
+    // TODO: ts moment
+    // @ts-ignore
     return new Datastore({
       filename: getPath(`storage/${name}.db`),
       autoload: true,
@@ -388,60 +445,44 @@ export class StorageService {
   };
 
   public addFavicon = async (url: string): Promise<string> => {
-    return new Promise(async resolve => {
-      if (!this.favicons.get(url)) {
-        try {
-          const res = await requestURL(url);
-
-          if (res.statusCode === 404) {
-            throw new Error('404 favicon not found');
-          }
-
-          let data = Buffer.from(res.data, 'binary');
-
-          const type = await fromBuffer(data);
-
-          if (type && type.ext === 'ico') {
-            data = Buffer.from(new Uint8Array(await convertIcoToPng(data)));
-          }
-
-          const str = `data:${
-            (await fromBuffer(data)).ext
-          };base64,${data.toString('base64')}`;
-
-          this.insert({
-            scope: 'favicons',
-            item: {
-              url,
-              data: str,
-            },
-          });
-
-          this.favicons.set(url, str);
-
-          resolve(str);
-        } catch (e) {
-          throw e;
-        }
-      } else {
-        resolve(this.favicons.get(url));
-      }
-    });
-  };
-
-  public importBookmarks = async () => {
-    const dialogRes = await dialog.showOpenDialog({
-      filters: [{ name: 'Bookmark file', extensions: ['html'] }],
-    });
-
     try {
-      const file = await promises.readFile(dialogRes.filePaths[0], 'utf8');
-      return parse(file);
+      if (!this.favicons.get(url)) {
+        const res = await requestURL(url);
+
+        if (res.statusCode === 404) {
+          return undefined;
+        }
+
+        let data = Buffer.from(res.data, 'binary');
+
+        const type = await fileTypeFromBuffer(data);
+
+        if (type && type.ext === 'ico') {
+          data = Buffer.from(new Uint8Array(await convertIcoToPng(data)));
+        }
+
+        const str = `data:${
+          (await fileTypeFromBuffer(data))?.ext
+        };base64,${data.toString('base64')}`;
+
+        await this.insert({
+          scope: 'favicons',
+          item: {
+            url,
+            data: str,
+          },
+        });
+
+        this.favicons.set(url, str);
+
+        return str;
+      } else {
+        return this.favicons.get(url);
+      }
     } catch (err) {
       console.error(err);
+      return undefined;
     }
-
-    return [];
   };
 
   private createBookmarkArray = (
@@ -451,7 +492,7 @@ export class StorageService {
   ): string[] => {
     let payload: string[] = [];
     let title;
-    const bookmarks = this.bookmarks.filter(x => x.parent === parentFolderId);
+    const bookmarks = this.bookmarks.filter((x) => x.parent === parentFolderId);
     const indentFirst = indentType.repeat(depth * indentLength);
     const indentNext = !first
       ? indentFirst
@@ -497,11 +538,11 @@ export class StorageService {
     const documentTitle = 'Bookmarks';
 
     const bar = this.createBookmarkArray(
-      this.bookmarks.find(x => x.static === 'main')._id,
+      this.bookmarks.find((x) => x.static === 'main')._id,
     );
 
     const other = this.createBookmarkArray(
-      this.bookmarks.find(x => x.static === 'other')._id,
+      this.bookmarks.find((x) => x.static === 'other')._id,
       false,
     );
 
@@ -525,5 +566,3 @@ ${other.join(breakTag)}
     }
   };
 }
-
-export default new StorageService();

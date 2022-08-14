@@ -1,58 +1,53 @@
-import { AppWindow } from '../windows';
-import { MENU_WIDTH } from '~/constants/design';
-import { Dialog } from '.';
+/* Copyright (c) 2021-2022 SnailDOS */
 
-const WIDTH = MENU_WIDTH;
-const HEIGHT = 128;
+import { BrowserWindow } from 'electron';
+import { Application } from '../application';
+import { DIALOG_MARGIN_TOP, DIALOG_MARGIN } from '~/constants/design';
+import { PersistentDialog } from './dialog';
+import { ERROR_PROTOCOL } from '~/constants/files';
 
-export class PreviewDialog extends Dialog {
+const HEIGHT = 256;
+
+export class PreviewDialog extends PersistentDialog {
   public visible = false;
-  public tab: { id?: number; x?: number } = {};
+  public tab: { id?: number; x?: number; y?: number } = {};
 
-  private timeout1: any;
-
-  constructor(appWindow: AppWindow) {
-    super(appWindow, {
+  constructor() {
+    super({
       name: 'preview',
       bounds: {
-        width: appWindow.getBounds().width,
         height: HEIGHT,
-        y: 39,
       },
-      hideTimeout: 200,
+      hideTimeout: 150,
     });
   }
 
   public rearrange() {
-    const { width } = this.appWindow.getContentBounds();
-    super.rearrange({ width });
+    const { width } = this.browserWindow.getContentBounds();
+    super.rearrange({ width, y: this.tab.y });
   }
 
-  public show() {
-    clearTimeout(this.timeout1);
-    this.appWindow.dialogs.searchDialog.rearrangePreview(true);
+  public async show(browserWindow: BrowserWindow) {
+    super.show(browserWindow, false);
 
-    super.show(false);
-
-    const tab = this.appWindow.viewManager.views.get(this.tab.id);
-
-    const url = tab.webContents.getURL();
-    const title = tab.webContents.getTitle();
-
-    this.webContents.send('visible', true, {
-      id: tab.id,
-      url: url.startsWith('midori-error') ? tab.errorURL : url,
+    const {
+      id,
+      url,
       title,
-      x: Math.round(this.tab.x - 8),
+      errorURL,
+    } = Application.instance.windows
+      .fromBrowserWindow(browserWindow)
+      .viewManager.views.get(this.tab.id);
+
+    this.send('visible', true, {
+      id,
+      url: url.startsWith(`${ERROR_PROTOCOL}://`) ? errorURL : url,
+      title,
+      x: this.tab.x - 8,
     });
   }
 
   public hide(bringToTop = true) {
-    clearTimeout(this.timeout1);
-    this.timeout1 = setTimeout(() => {
-      this.appWindow.dialogs.searchDialog.rearrangePreview(false);
-    }, 210);
-
     super.hide(bringToTop);
   }
 }

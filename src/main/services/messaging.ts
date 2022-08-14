@@ -1,250 +1,269 @@
-import { ipcMain } from 'electron';
-import { parse } from 'url';
-import { setPassword, deletePassword, getPassword } from 'keytar';
+/* Copyright (c) 2021-2022 SnailDOS */
 
-import { IFormFillData } from '~/interfaces';
+import { ipcMain } from 'electron';
+// import { getPassword, setPassword, deletePassword } from 'keytar';
+
 import { AppWindow } from '../windows';
-import { getFormFillMenuItems } from '../utils';
-import storage from './storage';
+import { Application } from '../application';
+import { showMenuDialog } from '../dialogs/menu';
+import { IFormFillData, IBookmark } from '~/interfaces';
+import { SearchDialog } from '../dialogs/search';
+import { URL } from 'url';
+import * as bookmarkMenu from '../menus/bookmarks';
+import { showFindDialog } from '../dialogs/find';
+import { showAddBookmarkDialog } from '../dialogs/add-bookmark';
+import { showExtensionDialog } from '../dialogs/extension-popup';
+import { showDownloadsDialog } from '../dialogs/downloads';
+import { showZoomDialog } from '../dialogs/zoom';
+import { showIncognitoDialog } from '../dialogs/incogitoMenu';
+import { showMenuExtraDialog } from '../dialogs/menuExtra';
+import { showTabGroupDialog } from '../dialogs/tabgroup';
 
 export const runMessagingService = (appWindow: AppWindow) => {
   const { id } = appWindow;
 
   ipcMain.on(`window-focus-${id}`, () => {
-    appWindow.focus();
+    appWindow.win.focus();
     appWindow.webContents.focus();
   });
 
   ipcMain.on(`window-toggle-maximize-${id}`, () => {
-    if (appWindow.isMaximized()) {
-      appWindow.unmaximize();
+    if (appWindow.win.isMaximized()) {
+      appWindow.win.unmaximize();
     } else {
-      appWindow.maximize();
+      appWindow.win.maximize();
     }
   });
 
   ipcMain.on(`window-minimize-${id}`, () => {
-    appWindow.minimize();
+    appWindow.win.minimize();
   });
 
   ipcMain.on(`window-close-${id}`, () => {
-    appWindow.close();
+    appWindow.win.close();
   });
 
   ipcMain.on(`window-fix-dragging-${id}`, () => {
     appWindow.fixDragging();
   });
 
-  ipcMain.on(`update-tab-find-info-${id}`, (e, ...args) =>
-    appWindow.webContents.send('update-tab-find-info', ...args),
-  );
-
-  ipcMain.on(`update-find-info-${id}`, (e, tabId, data) => {
-    if (appWindow.dialogs.findDialog.visible) {
-      appWindow.dialogs.findDialog.updateInfo(tabId, data);
-    }
+  ipcMain.on(`show-menu-dialog-${id}`, (e, x, y) => {
+    showMenuDialog(appWindow.win, x, y);
   });
 
-  ipcMain.on(`find-show-${id}`, (e, tabId, data) => {
-    appWindow.dialogs.findDialog.find(tabId, data);
+  ipcMain.on(`search-show-${id}`, (e, data) => {
+    const dialog = Application.instance.dialogs.getPersistent(
+      'search',
+    ) as SearchDialog;
+    dialog.data = data;
+    dialog.show(appWindow.win);
   });
 
-  ipcMain.on(`menu-show-${id}`, e => {
-    appWindow.dialogs.menuDialog.toggle();
+  ipcMain.handle(`is-dialog-visible-${id}`, (e, dialog) => {
+    return Application.instance.dialogs.isVisible(dialog);
   });
 
-  ipcMain.on(`search-show-${id}`, e => {
-    appWindow.dialogs.searchDialog.toggle();
+  ipcMain.on(`find-show-${id}`, () => {
+    showFindDialog(appWindow.win);
   });
 
-  ipcMain.on(`show-tab-preview-${id}`, (e, tab) => {
-    appWindow.dialogs.previewDialog.tab = tab;
-    appWindow.dialogs.previewDialog.show();
+  ipcMain.on(`find-in-page-${id}`, () => {
+    appWindow.send('find');
   });
 
-  ipcMain.on(`hide-tab-preview-${id}`, (e, tab) => {
-    appWindow.dialogs.previewDialog.hide(
-      appWindow.dialogs.previewDialog.visible,
-    );
+  ipcMain.on(`show-add-bookmark-dialog-${id}`, (e, left, top) => {
+    showAddBookmarkDialog(appWindow.win, left, top);
+  });
+
+  if (process.env.ENABLE_EXTENSIONS) {
+    ipcMain.on(`show-extension-popup-${id}`, (e, left, top, url, inspect) => {
+      showExtensionDialog(appWindow.win, left, top, url, inspect);
+    });
+  }
+
+  ipcMain.on(`show-downloads-dialog-${id}`, (e, left, top) => {
+    showDownloadsDialog(appWindow.win, left, top);
+  });
+
+  ipcMain.on(`show-menu_extra-dialog-${id}`, (e, left, top) => {
+    showMenuExtraDialog(appWindow.win, left, top);
+  });
+
+  ipcMain.on(`show-zoom-dialog-${id}`, (e, left, top) => {
+    showZoomDialog(appWindow.win, left, top);
   });
 
   ipcMain.on(`show-tabgroup-dialog-${id}`, (e, tabGroup) => {
-    appWindow.dialogs.tabGroupDialog.edit(tabGroup);
-  });
-
-  ipcMain.on(`show-downloads-dialog-${id}`, (e, left) => {
-    appWindow.dialogs.downloadsDialog.left = left;
-    appWindow.dialogs.downloadsDialog.show();
-  });
-
-  ipcMain.on(`show-extension-popup-${id}`, (e, left, url) => {
-    appWindow.dialogs.extensionPopup.left = left;
-    appWindow.dialogs.extensionPopup.url = url;
-    appWindow.dialogs.extensionPopup.show();
-  });
-
-  ipcMain.on(`inspect-extension-popup-${id}`, (e, left, url) => {
-    appWindow.dialogs.extensionPopup.left = left;
-    appWindow.dialogs.extensionPopup.url = url;
-    appWindow.dialogs.extensionPopup.show();
-    appWindow.dialogs.extensionPopup.webContents.send('inspect');
-  });
-
-  ipcMain.on(`hide-extension-popup-${id}`, e => {
-    appWindow.dialogs.extensionPopup.hide();
-  });
-
-  ipcMain.on(`show-add-bookmark-dialog-${id}`, (e, left) => {
-    appWindow.dialogs.addBookmarkDialog.left = left;
-    appWindow.dialogs.addBookmarkDialog.show();
+    showTabGroupDialog(appWindow.win, tabGroup);
   });
 
   ipcMain.on(`edit-tabgroup-${id}`, (e, tabGroup) => {
-    appWindow.webContents.send(`edit-tabgroup`, tabGroup);
+    appWindow.send(`edit-tabgroup`, tabGroup);
   });
 
-  ipcMain.on(`is-incognito-${id}`, e => {
+  ipcMain.on(`is-incognito-${id}`, (e) => {
     e.returnValue = appWindow.incognito;
   });
 
-  ipcMain.on(`form-fill-show-${id}`, async (e, rect, name, value) => {
-    const items = await getFormFillMenuItems(name, value);
-
-    if (items.length) {
-      appWindow.dialogs.formFillDialog.webContents.send(
-        `formfill-get-items`,
-        items,
-      );
-      appWindow.dialogs.formFillDialog.inputRect = rect;
-
-      appWindow.dialogs.formFillDialog.resize(
-        items.length,
-        items.find(r => r.subtext) != null,
-      );
-      appWindow.dialogs.formFillDialog.rearrange();
-      appWindow.dialogs.formFillDialog.show(false);
-    } else {
-      appWindow.dialogs.formFillDialog.hide();
-    }
+  ipcMain.on(`show-incognitoMenu-dialog-${id}`, (e, x, y) => {
+    showIncognitoDialog(appWindow.win, x, y);
   });
 
-  ipcMain.on(`form-fill-hide-${id}`, () => {
-    appWindow.dialogs.formFillDialog.hide();
-  });
+  if (process.env.ENABLE_AUTOFILL) {
+    // TODO: autofill
+    // ipcMain.on(`form-fill-show-${id}`, async (e, rect, name, value) => {
+    //   const items = await getFormFillMenuItems(name, value);
 
-  ipcMain.on(
-    `form-fill-update-${id}`,
-    async (e, _id: string, persistent = false) => {
-      const url = appWindow.viewManager.selected.webContents.getURL();
-      const { hostname } = parse(url);
+    //   if (items.length) {
+    //     appWindow.dialogs.formFillDialog.send(`formfill-get-items`, items);
+    //     appWindow.dialogs.formFillDialog.inputRect = rect;
 
-      const item =
-        _id &&
-        (await storage.findOne<IFormFillData>({
+    //     appWindow.dialogs.formFillDialog.resize(
+    //       items.length,
+    //       items.find((r) => r.subtext) != null,
+    //     );
+    //     appWindow.dialogs.formFillDialog.rearrange();
+    //     appWindow.dialogs.formFillDialog.show(false);
+    //   } else {
+    //     appWindow.dialogs.formFillDialog.hide();
+    //   }
+    // });
+
+    // ipcMain.on(`form-fill-hide-${id}`, () => {
+    //   appWindow.dialogs.formFillDialog.hide();
+    // });
+
+    ipcMain.on(
+      `form-fill-update-${id}`,
+      async (e, _id: string, persistent = false) => {
+        const url = appWindow.viewManager.selected.url;
+        const { hostname } = new URL(url);
+
+        const item =
+          _id &&
+          (await Application.instance.storage.findOne<IFormFillData>({
+            scope: 'formfill',
+            query: { _id },
+          }));
+
+        if (item && item.type === 'password') {
+          // item.fields.password = await getPassword(
+          //   'Midori',
+          //   `${hostname}-${item.fields.username}`,
+          // );
+        }
+
+        appWindow.viewManager.selected.send(
+          `form-fill-update-${id}`,
+          item,
+          persistent,
+        );
+      },
+    );
+
+    // ipcMain.on(`credentials-show-${id}`, (e, data) => {
+    //   appWindow.dialogs.credentialsDialog.send('credentials-update', data);
+    //   appWindow.dialogs.credentialsDialog.rearrange();
+    //   appWindow.dialogs.credentialsDialog.show();
+    // });
+
+    // ipcMain.on(`credentials-hide-${id}`, () => {
+    //   appWindow.dialogs.credentialsDialog.hide();
+    // });
+
+    ipcMain.on(`credentials-save-${id}`, async (e, data) => {
+      const { username, password, update, oldUsername } = data;
+      const view = appWindow.viewManager.selected;
+      const hostname = view.hostname;
+
+      if (!update) {
+        const item = await Application.instance.storage.insert<IFormFillData>({
           scope: 'formfill',
-          query: { _id },
-        }));
+          item: {
+            type: 'password',
+            url: hostname,
+            favicon: appWindow.viewManager.selected.favicon,
+            fields: {
+              username,
+              passLength: password.length,
+            },
+          },
+        });
 
-      if (item && item.type === 'password') {
-        item.fields.password = await getPassword(
-          'midori',
-          `${hostname}-${item.fields.username}`,
+        appWindow.viewManager.settingsView.webContents.send(
+          'credentials-insert',
+          item,
+        );
+      } else {
+        await Application.instance.storage.update({
+          scope: 'formfill',
+          query: {
+            type: 'password',
+            url: hostname,
+            'fields.username': oldUsername,
+            'fields.passLength': password.length,
+          },
+          value: {
+            'fields.username': username,
+          },
+        });
+
+        appWindow.viewManager.settingsView.webContents.send(
+          'credentials-update',
+          { ...data, hostname },
         );
       }
 
-      appWindow.viewManager.selected.webContents.send(
-        `form-fill-update-${id}`,
-        item,
-        persistent,
-      );
-    },
-  );
+      // await setPassword('Midori', `${hostname}-${username}`, password);
 
-  ipcMain.on(`credentials-show-${id}`, (e, data) => {
-    appWindow.dialogs.credentialsDialog.webContents.send(
-      'credentials-update',
-      data,
-    );
-    appWindow.dialogs.credentialsDialog.rearrange();
-    appWindow.dialogs.credentialsDialog.show();
-  });
-
-  ipcMain.on(`credentials-hide-${id}`, () => {
-    appWindow.dialogs.credentialsDialog.hide();
-  });
-
-  ipcMain.on(`credentials-save-${id}`, async (e, data) => {
-    const { username, password, update, oldUsername } = data;
-    const view = appWindow.viewManager.selected;
-    const hostname = view.hostname;
-
-    if (!update) {
-      const item = await storage.insert<IFormFillData>({
-        scope: 'formfill',
-        item: {
-          type: 'password',
-          url: hostname,
-          favicon: appWindow.viewManager.selected.favicon,
-          fields: {
-            username,
-            passLength: password.length,
-          },
-        },
-      });
-
-      appWindow.viewManager.settingsView.webContents.send(
-        'credentials-insert',
-        item,
-      );
-    } else {
-      await storage.update({
-        scope: 'formfill',
-        query: {
-          type: 'password',
-          url: hostname,
-          'fields.username': oldUsername,
-          'fields.passLength': password.length,
-        },
-        value: {
-          'fields.username': username,
-        },
-      });
-
-      appWindow.viewManager.settingsView.webContents.send(
-        'credentials-update',
-        { ...data, hostname },
-      );
-    }
-
-    await setPassword('midori', `${hostname}-${username}`, password);
-
-    appWindow.webContents.send(`has-credentials-${view.webContents.id}`, true);
-  });
-
-  ipcMain.on(`credentials-remove-${id}`, async (e, data: IFormFillData) => {
-    const { _id, fields } = data;
-    const view = appWindow.viewManager.selected;
-
-    await storage.remove({
-      scope: 'formfill',
-      query: {
-        _id,
-      },
+      appWindow.send(`has-credentials-${view.id}`, true);
     });
 
-    await deletePassword('midori', `${view.hostname}-${fields.username}`);
+    ipcMain.on(`credentials-remove-${id}`, async (e, data: IFormFillData) => {
+      const { _id, fields } = data;
+      const view = appWindow.viewManager.selected;
 
-    appWindow.viewManager.settingsView.webContents.send(
-      'credentials-remove',
-      _id,
+      await Application.instance.storage.remove({
+        scope: 'formfill',
+        query: {
+          _id,
+        },
+      });
+
+      // await deletePassword('Midori', `${view.hostname}-${fields.username}`);
+
+      appWindow.viewManager.settingsView.webContents.send(
+        'credentials-remove',
+        _id,
+      );
+    });
+
+    ipcMain.on(
+      'credentials-get-password',
+      async (e, id: string, account: string) => {
+        // const password = await getPassword('Midori', account);
+        // e.sender.send(id, password);
+      },
     );
-  });
+  }
 
-  ipcMain.on(
-    'credentials-get-password',
-    async (e, id: string, account: string) => {
-      const password = await getPassword('midori', account);
-      e.sender.send(id, password);
+  ipcMain.handle(
+    `show-bookmarks-bar-dropdown-${id}`,
+    (
+      event,
+      folderId: string,
+      bookmarks: IBookmark[],
+      { x, y }: { x: number; y: number },
+    ) => {
+      bookmarkMenu
+        .createDropdown(appWindow, folderId, bookmarks)
+        .popup({ x: Math.floor(x), y: Math.floor(y), window: appWindow.win });
+    },
+  );
+  ipcMain.handle(
+    `show-bookmarks-bar-context-menu-${id}`,
+    (event, item: IBookmark) => {
+      bookmarkMenu.createMenu(appWindow, item).popup({ window: appWindow.win });
     },
   );
 };

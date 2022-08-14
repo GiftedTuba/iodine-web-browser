@@ -1,4 +1,6 @@
-import { observable, computed, action } from 'mobx';
+/* Copyright (c) 2021-2022 SnailDOS */
+
+import { observable, computed, action, makeObservable } from 'mobx';
 import {
   ISettings,
   IHistoryItem,
@@ -19,84 +21,28 @@ export type QuickRange =
   | 'older';
 
 export class Store {
-  @observable
+  public faviconsDb = new PreloadDatabase<IFavicon>('favicons');
+
+  // Observable
+
   public settings: ISettings = { ...(window as any).settings };
 
-  @computed
+  public items: IHistoryItem[] = [];
+
+  public itemsLoaded = this.getDefaultLoaded();
+
+  public selectedRange: QuickRange = 'all';
+
+  public searched = '';
+
+  public selectedItems: string[] = [];
+
+  public favicons: Map<string, string> = new Map();
+
   public get theme(): ITheme {
     return getTheme(this.settings.theme);
   }
 
-  @observable
-  public items: IHistoryItem[] = [];
-
-  @observable
-  public itemsLoaded = this.getDefaultLoaded();
-
-  @observable
-  public selectedRange: QuickRange = 'all';
-
-  @observable
-  public searched = '';
-
-  @observable
-  public selectedItems: string[] = [];
-
-  @observable
-  public favicons: Map<string, string> = new Map();
-
-  public faviconsDb = new PreloadDatabase<IFavicon>('favicons');
-
-  public constructor() {
-    (window as any).updateSettings = (settings: ISettings) => {
-      this.settings = { ...this.settings, ...settings };
-    };
-
-    this.load();
-    this.loadFavicons();
-
-    window.addEventListener('resize', () => {
-      const loaded = this.getDefaultLoaded();
-
-      if (loaded > this.itemsLoaded) {
-        this.itemsLoaded = loaded;
-      }
-    });
-  }
-
-  public resetLoadedItems(): void {
-    this.itemsLoaded = this.getDefaultLoaded();
-  }
-
-  public getById(id: string): IHistoryItem {
-    return this.items.find(x => x._id === id);
-  }
-
-  public async load() {
-    this.items = await (window as any).getHistory();
-  }
-
-  public async loadFavicons() {
-    (await this.faviconsDb.get({})).forEach(favicon => {
-      const { data } = favicon;
-
-      if (this.favicons.get(favicon.url) == null) {
-        this.favicons.set(favicon.url, data);
-      }
-    });
-  }
-
-  public clear() {
-    this.items = [];
-    (window as any).removeHistory(this.items.map(x => x._id));
-  }
-
-  public removeItems(id: string[]) {
-    this.items = this.items.filter(x => id.indexOf(x._id) === -1);
-    (window as any).removeHistory(id);
-  }
-
-  @computed
   public get sections() {
     const list: IHistorySection[] = [];
     let section: IHistorySection;
@@ -138,7 +84,6 @@ export class Store {
     return list;
   }
 
-  @computed
   public get range() {
     const current = new Date();
     const day = current.getDate();
@@ -188,7 +133,70 @@ export class Store {
     );
   }
 
-  @action
+  public constructor() {
+    makeObservable(this, {
+      settings: observable,
+      items: observable,
+      itemsLoaded: observable,
+      selectedRange: observable,
+      searched: observable,
+      selectedItems: observable,
+      favicons: observable,
+      theme: computed,
+      sections: computed,
+      range: computed,
+      search: action,
+      deleteSelected: action,
+    });
+
+    (window as any).updateSettings = (settings: ISettings) => {
+      this.settings = { ...this.settings, ...settings };
+    };
+
+    this.load();
+    this.loadFavicons();
+
+    window.addEventListener('resize', () => {
+      const loaded = this.getDefaultLoaded();
+
+      if (loaded > this.itemsLoaded) {
+        this.itemsLoaded = loaded;
+      }
+    });
+  }
+
+  public resetLoadedItems(): void {
+    this.itemsLoaded = this.getDefaultLoaded();
+  }
+
+  public getById(id: string): IHistoryItem {
+    return this.items.find((x) => x._id === id);
+  }
+
+  public async load() {
+    this.items = await (window as any).getHistory();
+  }
+
+  public async loadFavicons() {
+    (await this.faviconsDb.get({})).forEach((favicon) => {
+      const { data } = favicon;
+
+      if (this.favicons.get(favicon.url) == null) {
+        this.favicons.set(favicon.url, data);
+      }
+    });
+  }
+
+  public clear() {
+    (window as any).removeHistory(this.items.map((x) => x._id));
+    this.items = [];
+  }
+
+  public removeItems(id: string[]) {
+    this.items = this.items.filter((x) => id.indexOf(x._id) === -1);
+    (window as any).removeHistory(id);
+  }
+
   public search(str: string) {
     this.searched = str.toLowerCase().toLowerCase();
     this.itemsLoaded = this.getDefaultLoaded();
@@ -198,7 +206,6 @@ export class Store {
     return Math.floor(window.innerHeight / 48);
   }
 
-  @action
   public deleteSelected() {
     this.removeItems(this.selectedItems);
     this.selectedItems = [];

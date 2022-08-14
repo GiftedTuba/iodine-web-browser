@@ -1,7 +1,10 @@
+/* Copyright (c) 2021-2022 SnailDOS */
+
 import styled, { css } from 'styled-components';
 
 import { centerIcon } from '~/renderer/mixins';
-import { icons, transparency } from '~/renderer/constants';
+import { transparency } from '~/renderer/constants';
+import { ICON_FOLDER, ICON_DROPDOWN } from '~/renderer/constants/icons';
 import { ITheme } from '~/interfaces';
 
 export const StyledTreeItem = styled.div`
@@ -11,7 +14,7 @@ export const StyledTreeItem = styled.div`
   margin-top: 4px;
   align-items: center;
   cursor: pointer;
-  border-radius: 4px;
+  border-radius: 10px;
 
   ${({ theme, selected }: { theme?: ITheme; selected: boolean }) => css`
     &:hover {
@@ -32,7 +35,7 @@ export const DropIcon = styled.div`
   min-width: 24px;
   min-height: 24px;
   margin: 0px 2px;
-  background-image: url(${icons.dropDown});
+  background-image: url(${ICON_DROPDOWN});
   border-radius: 100%;
   ${centerIcon(20)};
   ${({
@@ -59,7 +62,7 @@ export const FolderIcon = styled.div`
   min-width: 24px;
   min-height: 24px;
   opacity: ${transparency.icons.inactive};
-  background-image: url(${icons.folder});
+  background-image: url(${ICON_FOLDER});
   ${centerIcon(20)}
 
   ${({ theme }: { theme?: ITheme }) => css`

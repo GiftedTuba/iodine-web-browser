@@ -1,47 +1,48 @@
-import { AppWindow } from '../windows';
-import { Dialog } from '.';
-import { ipcMain } from 'electron';
+/* Copyright (c) 2021-2022 SnailDOS */
 
-const WIDTH = 350;
+import { BrowserWindow } from 'electron';
+import { Application } from '../application';
+import {
+  DIALOG_MARGIN_TOP,
+  DIALOG_MARGIN,
+  DIALOG_TOP,
+} from '~/constants/design';
 
-export class DownloadsDialog extends Dialog {
-  public visible = false;
+export const showDownloadsDialog = (
+  browserWindow: BrowserWindow,
+  x: number,
+  y: number,
+) => {
+  let height = 0;
 
-  private height = 0;
+  const dialog = Application.instance.dialogs.show({
+    name: 'downloads-dialog',
+    browserWindow,
+    getBounds: () => {
+      const winBounds = browserWindow.getContentBounds();
+      const maxHeight = winBounds.height - DIALOG_TOP - 16;
 
-  public left = 0;
+      height = Math.round(Math.min(winBounds.height, height + 28));
 
-  constructor(appWindow: AppWindow) {
-    super(appWindow, {
-      name: 'downloads',
-      bounds: {
-        width: WIDTH,
-        height: 0,
-        y: 34,
-      },
-    });
+      dialog.browserView.webContents.send(
+        `max-height`,
+        Math.min(maxHeight, height),
+      );
 
-    ipcMain.on(`height-${this.webContents.id}`, (e, height) => {
-      this.height = height;
-      this.rearrange();
-    });
-  }
+      return {
+        x: x - 350 + DIALOG_MARGIN,
+        y: y - DIALOG_MARGIN_TOP + 10,
+        width: 350,
+        height,
+      };
+    },
+    onWindowBoundsUpdate: () => dialog.hide(),
+  });
 
-  public rearrange() {
-    const { width, height } = this.appWindow.getContentBounds();
+  if (!dialog) return;
 
-    const maxHeight = height - 34 - 16;
-
-    super.rearrange({
-      x: Math.round(Math.min(this.left - WIDTH / 2, width - WIDTH)),
-      height: Math.round(Math.min(height, this.height + 16)),
-    });
-
-    this.webContents.send(`max-height`, Math.min(maxHeight, this.height));
-  }
-
-  public show() {
-    super.show();
-    this.webContents.send('visible', true);
-  }
-}
+  dialog.on('height', (e, h) => {
+    height = h;
+    dialog.rearrange();
+  });
+};

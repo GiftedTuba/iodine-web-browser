@@ -1,6 +1,8 @@
-import { WEBUI_BASE_URL, WEBUI_URL_SUFFIX } from './files';
+/* Copyright (c) 2021-2022 SnailDOS */
 
-export const NEWTAB_URL = `${WEBUI_BASE_URL}newtab${WEBUI_URL_SUFFIX}`;
+import { getWebUIURL } from '~/common/webui';
+
+export const NEWTAB_URL = getWebUIURL('newtab');
 
 export const defaultTabOptions: chrome.tabs.CreateProperties = {
   url: NEWTAB_URL,

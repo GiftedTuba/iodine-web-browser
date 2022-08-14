@@ -1,3 +1,5 @@
+/* Copyright (c) 2021-2022 SnailDOS */
+
 import { ipcRenderer } from 'electron';
 import * as React from 'react';
 import { observer } from 'mobx-react-lite';
@@ -36,7 +38,7 @@ const Item = observer(({ data }: { data: IFormFillMenuItem }) => {
 export default observer(() => {
   return (
     <StyledList>
-      {store.items.map(item => (
+      {store.items.map((item) => (
         <Item key={item._id} data={item} />
       ))}
     </StyledList>

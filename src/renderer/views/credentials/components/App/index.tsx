@@ -1,19 +1,17 @@
+/* Copyright (c) 2021-2022 SnailDOS */
+
 import { ipcRenderer } from 'electron';
 import * as React from 'react';
 import { observer } from 'mobx-react-lite';
-import { createGlobalStyle } from 'styled-components';
-import { hot } from 'react-hot-loader/root';
 
 import store from '../../store';
 import { Textfield } from '~/renderer/components/Textfield';
 import { PasswordInput } from '~/renderer/components/PasswordInput';
 import { Button } from '~/renderer/components/Button';
 import List from '../List';
-import { GREEN_500 } from '~/renderer/constants';
-import { Style } from '../../style';
+import { BLUE_500 } from '~/renderer/constants';
 import { StyledApp, Title, Buttons, Container } from './style';
-
-const GlobalStyle = createGlobalStyle`${Style}`;
+import { UIStyle } from '~/renderer/mixins/default-styles';
 
 const onSave = () => {
   const username = store.usernameRef.current.value.trim();
@@ -42,58 +40,56 @@ const Fields = observer(() => {
   );
 });
 
-export const App = hot(
-  observer(() => {
-    let title = '';
+export const App = observer(() => {
+  let title = '';
 
-    if (store.content === 'list') {
-      title = store.list.length
-        ? 'Saved passwords for this site'
-        : 'No passwords saved for this site';
-    } else {
-      title = store.content === 'save' ? 'Save password?' : 'Update password?';
-    }
+  if (store.content === 'list') {
+    title = store.list.length
+      ? 'Saved passwords for this site'
+      : 'No passwords saved for this site';
+  } else {
+    title = store.content === 'save' ? 'Save password?' : 'Update password?';
+  }
 
-    return (
-      <StyledApp>
-        <GlobalStyle />
-        <Title>{title}</Title>
-        <Container>
-          <Fields />
-          <List />
-        </Container>
-        <Buttons>
-          {store.content !== 'list' && (
-            <Button
-              onClick={onSave}
-              foreground="black"
-              background="rgba(0, 0, 0, 0.08)"
-              style={{ marginLeft: 'auto' }}
-            >
-              Save
-            </Button>
-          )}
-          {store.content === 'list' && (
-            <Button
-              foreground={GREEN_500}
-              background="transparent"
-              style={{ marginRight: 'auto', padding: '0px 12px' }}
-              onClick={onClose}
-            >
-              Manage passwords
-            </Button>
-          )}
+  return (
+    <StyledApp>
+      <UIStyle />
+      <Title>{title}</Title>
+      <Container>
+        <Fields />
+        <List />
+      </Container>
+      <Buttons>
+        {store.content !== 'list' && (
           <Button
+            onClick={onSave}
             foreground="black"
             background="rgba(0, 0, 0, 0.08)"
-            onClick={onClose}
-            style={{ marginLeft: 8 }}
+            style={{ marginLeft: 'auto' }}
           >
-            Close
+            Save
           </Button>
-        </Buttons>
-        <div style={{ clear: 'both' }}></div>
-      </StyledApp>
-    );
-  }),
-);
+        )}
+        {store.content === 'list' && (
+          <Button
+            foreground={BLUE_500}
+            background="transparent"
+            style={{ marginRight: 'auto', padding: '0px 12px' }}
+            onClick={onClose}
+          >
+            Manage passwords
+          </Button>
+        )}
+        <Button
+          foreground="black"
+          background="rgba(0, 0, 0, 0.08)"
+          onClick={onClose}
+          style={{ marginLeft: 8 }}
+        >
+          Close
+        </Button>
+      </Buttons>
+      <div style={{ clear: 'both' }}></div>
+    </StyledApp>
+  );
+});

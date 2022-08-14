@@ -1,6 +1,8 @@
-import { BrowserView, app, ipcMain } from 'electron';
+/* Copyright (c) 2021-2022 SnailDOS */
+
+import { BrowserView, app, ipcMain, BrowserWindow } from 'electron';
 import { join } from 'path';
-import { AppWindow } from '../windows';
+import { roundifyRectangle } from '../services/dialogs-service';
 
 interface IOptions {
   name: string;
@@ -18,8 +20,9 @@ interface IRectangle {
   height?: number;
 }
 
-export class Dialog extends BrowserView {
-  public appWindow: AppWindow;
+export class PersistentDialog {
+  public browserWindow: BrowserWindow;
+  public browserView: BrowserView;
 
   public visible = false;
 
@@ -30,119 +33,165 @@ export class Dialog extends BrowserView {
     height: 0,
   };
 
-  private timeout: any;
-  private hideTimeout: number;
-  private name: string;
+  public name: string;
 
-  public constructor(
-    appWindow: AppWindow,
-    { bounds, name, devtools, hideTimeout, webPreferences }: IOptions,
-  ) {
-    super({
+  private timeout: any;
+  private readonly hideTimeout: number;
+
+  private loaded = false;
+  private showCallback: any = null;
+
+  public constructor({
+    bounds,
+    name,
+    hideTimeout,
+    webPreferences,
+  }: IOptions) {
+    this.browserView = new BrowserView({
       webPreferences: {
         nodeIntegration: true,
         contextIsolation: false,
-        affinity: 'dialog',
+        // @ts-ignore
+        transparent: true,
         ...webPreferences,
       },
     });
+    require('@electron/remote/main').enable(this.browserView.webContents);
 
-    this.appWindow = appWindow;
     this.bounds = { ...this.bounds, ...bounds };
     this.hideTimeout = hideTimeout;
     this.name = name;
 
-    ipcMain.on(`hide-${this.webContents.id}`, () => {
-      this.hide();
+    const { webContents } = this.browserView;
+
+    ipcMain.on(`hide-${webContents.id}`, () => {
+      this.hide(false, false);
     });
 
-    if (process.env.NODE_ENV === 'development') {
-      this.webContents.loadURL(`http://localhost:4444/${name}.html`);
-      if (devtools) {
-        this.webContents.openDevTools({ mode: 'detach' });
+    webContents.once('dom-ready', () => {
+      this.loaded = true;
+
+      if (this.showCallback) {
+        this.showCallback();
+        this.showCallback = null;
       }
-    } else {
-      this.webContents.loadURL(
-        join('file://', app.getAppPath(), `build/${name}.html`),
-      );
-    }
+    });
+
+    (async () => {
+      if (process.env.NODE_ENV === 'development') {
+        await this.webContents.loadURL(`http://localhost:4444/${this.name}.html`);
+      } else {
+        await this.webContents.loadURL(
+          join('file://', app.getAppPath(), `build/${this.name}.html`),
+        );
+      }
+    })()
+  }
+
+  public get webContents() {
+    return this.browserView.webContents;
+  }
+
+  public get id() {
+    return this.webContents.id;
   }
 
   public rearrange(rect: IRectangle = {}) {
-    this.bounds = {
-      height: rect.height || this.bounds.height,
-      width: rect.width || this.bounds.width,
-      x: rect.x || this.bounds.x,
-      y: rect.y || this.bounds.y,
-    };
+    this.bounds = roundifyRectangle({
+      height: rect.height || this.bounds.height || 0,
+      width: rect.width || this.bounds.width || 0,
+      x: rect.x || this.bounds.x || 0,
+      y: rect.y || this.bounds.y || 0,
+    });
 
     if (this.visible) {
-      this.setBounds(this.bounds as any);
+      this.browserView.setBounds(this.bounds as any);
     }
   }
 
-  public toggle() {
-    if (!this.visible) this.show();
-    else this.hide();
-  }
+  public show(browserWindow: BrowserWindow, focus = true, waitForLoad = true) {
+    return new Promise((resolve) => {
+      this.browserWindow = browserWindow;
 
-  public show(focus = true) {
-    if (this.visible) return;
+      clearTimeout(this.timeout);
 
-    this.visible = true;
+      browserWindow.webContents.send(
+        'dialog-visibility-change',
+        this.name,
+        true,
+      );
 
-    clearTimeout(this.timeout);
+      const callback = () => {
+        if (this.visible) {
+          if (focus) this.webContents.focus();
+          return;
+        }
 
-    if (process.platform === 'darwin') {
-      setTimeout(() => {
-        this.bringToTop();
+        this.visible = true;
+
+        browserWindow.addBrowserView(this.browserView);
+        this.rearrange();
+
         if (focus) this.webContents.focus();
-      });
-    } else {
-      this.bringToTop();
-      if (focus) this.webContents.focus();
-    }
 
-    this.rearrange();
-  }
+        resolve(undefined);
+      };
 
-  public hideVisually() {
-    this.webContents.send('visible', false);
-  }
+      if (!this.loaded && waitForLoad) {
+        this.showCallback = callback;
+        return;
+      }
 
-  private _hide() {
-    this.setBounds({
-      height: this.bounds.height,
-      width: 1,
-      x: 0,
-      y: -this.bounds.height + 1,
+      callback();
     });
   }
 
-  public hide(bringToTop = false) {
+  public hideVisually() {
+    this.send('visible', false);
+  }
+
+  public send(channel: string, ...args: any[]) {
+    this.webContents.send(channel, ...args);
+  }
+
+  public hide(bringToTop = false, hideVisually = true) {
+    if (!this.browserWindow) return;
+
+    if (hideVisually) this.hideVisually();
+
+    if (!this.visible) return;
+
+    this.browserWindow.webContents.send(
+      'dialog-visibility-change',
+      this.name,
+      false,
+    );
+
     if (bringToTop) {
       this.bringToTop();
     }
 
-    if (!this.visible) return;
-
     clearTimeout(this.timeout);
 
     if (this.hideTimeout) {
-      this.timeout = setTimeout(() => this._hide(), this.hideTimeout);
+      this.timeout = setTimeout(() => {
+        this.browserWindow.removeBrowserView(this.browserView);
+      }, this.hideTimeout);
     } else {
-      this._hide();
+      this.browserWindow.removeBrowserView(this.browserView);
     }
 
     this.visible = false;
 
-    this.hideVisually();
-
-    this.appWindow.fixDragging();
+    // this.appWindow.fixDragging();
   }
 
   public bringToTop() {
-    this.appWindow.removeBrowserView(this);
-    this.appWindow.addBrowserView(this);
+    this.browserWindow.removeBrowserView(this.browserView);
+    this.browserWindow.addBrowserView(this.browserView);
+  }
+
+  public destroy() {
+    this.browserView = null;
   }
 }

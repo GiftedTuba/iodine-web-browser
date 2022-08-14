@@ -1,4 +1,6 @@
-import { observable, action } from 'mobx';
+/* Copyright (c) 2021-2022 SnailDOS */
+
+import { observable, action, makeObservable } from 'mobx';
 
 import { ITabGroup } from '../models';
 import { Store } from '.';
@@ -24,7 +26,6 @@ import {
 import { ipcRenderer } from 'electron';
 
 export class TabGroupsStore {
-  @observable
   public list: ITabGroup[] = [];
 
   public palette: string[] = [
@@ -50,6 +51,8 @@ export class TabGroupsStore {
   private store: Store;
 
   public constructor(store: Store) {
+    makeObservable(this, { list: observable, addGroup: action });
+
     this.store = store;
 
     ipcRenderer.on('edit-tabgroup', (e, t) => {
@@ -63,10 +66,9 @@ export class TabGroupsStore {
   }
 
   public getGroupById(id: number) {
-    return this.list.find(x => x.id === id);
+    return this.list.find((x) => x.id === id);
   }
 
-  @action
   public addGroup() {
     const tabGroup = new ITabGroup(this.store, this);
     this.list.push(tabGroup);

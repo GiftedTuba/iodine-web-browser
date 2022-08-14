@@ -1,13 +1,16 @@
-import { observable } from 'mobx';
+/* Copyright (c) 2021-2022 SnailDOS */
+
+import { makeObservable, observable } from 'mobx';
 import { ipcRenderer } from 'electron';
 
 import { IDownloadItem } from '~/interfaces';
 
 export class DownloadsStore {
-  @observable
   public list: IDownloadItem[] = [];
 
   public constructor() {
+    makeObservable(this, { list: observable });
+
     ipcRenderer.on('download-started', (e, item: IDownloadItem) => {
       this.list.push(item);
 
@@ -22,12 +25,12 @@ export class DownloadsStore {
     });
 
     ipcRenderer.on('download-progress', (e, item: IDownloadItem) => {
-      const i = this.list.find(x => x.id === item.id);
+      const i = this.list.find((x) => x.id === item.id);
       i.receivedBytes = item.receivedBytes;
     });
 
     ipcRenderer.on('download-completed', (e, id: string) => {
-      const i = this.list.find(x => x.id === id);
+      const i = this.list.find((x) => x.id === id);
       i.completed = true;
     });
   }

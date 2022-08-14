@@ -1,11 +1,11 @@
+/* Copyright (c) 2021-2022 SnailDOS */
+
 import * as React from 'react';
 
 import { ipcRenderer } from 'electron';
-import { observable, computed } from 'mobx';
-import { DEFAULT_SEARCH_ENGINES } from '~/constants';
+import { observable, computed, makeObservable } from 'mobx';
 import { ISuggestion, IVisitedItem } from '~/interfaces';
 import { SuggestionsStore } from './suggestions';
-import { NEWTAB_URL } from '~/constants/tabs';
 import { DialogStore } from '~/models/dialog-store';
 
 let lastSuggestion: string;
@@ -20,21 +20,12 @@ interface ISearchTab {
 export class Store extends DialogStore {
   public suggestions = new SuggestionsStore(this);
 
-  @observable
   public visitedItems: IVisitedItem[] = [];
 
-  @observable
   public tabs: ISearchTab[] = [];
 
-  @observable
   public inputText = '';
 
-  @computed
-  public get searchEngines() {
-    return DEFAULT_SEARCH_ENGINES.concat(this.settings.searchEngines);
-  }
-
-  @computed
   public get searchedTabs(): ISuggestion[] {
     const lastItem = this.suggestions.list[this.suggestions.list.length - 1];
 
@@ -46,11 +37,11 @@ export class Store extends DialogStore {
 
     return this.tabs
       .filter(
-        tab =>
+        (tab) =>
           tab.title.indexOf(this.inputText) !== -1 ||
           tab.url.indexOf(this.inputText) !== -1,
       )
-      .map(tab => ({
+      .map((tab) => ({
         primaryText: tab.url,
         secondaryText: tab.title,
         id: id++,
@@ -59,9 +50,8 @@ export class Store extends DialogStore {
       .slice(0, 3);
   }
 
-  @computed
   public get searchEngine() {
-    return this.searchEngines[this.settings.searchEngine];
+    return this.settings.searchEngines[this.settings.searchEngine];
   }
 
   public canSuggest = false;
@@ -71,22 +61,35 @@ export class Store extends DialogStore {
   public tabId = 1;
 
   public constructor() {
-    super();
+    super({
+      visibilityWrapper: false,
+      persistent: true,
+    });
 
-    ipcRenderer.on('visible', (e, flag, tab) => {
-      this.visible = flag;
+    makeObservable(this, {
+      visitedItems: observable,
+      tabs: observable,
+      inputText: observable,
+      searchedTabs: computed,
+      searchEngine: computed,
+    });
 
-      if (flag) {
+    ipcRenderer.on('visible', (e, visible, data) => {
+      this.visible = visible;
+
+      if (visible) {
         this.tabs = [];
-        this.suggestions.list = [];
-        this.tabId = tab.id;
-        if (tab.url.startsWith(NEWTAB_URL)) {
-          this.inputRef.current.value = '';
-        } else {
-          this.inputRef.current.value = tab.url;
-        }
+        this.tabId = data.id;
 
+        this.canSuggest = this.inputText.length <= data.text.length;
+
+        this.inputRef.current.value = data.text;
         this.inputRef.current.focus();
+
+        this.inputRef.current.setSelectionRange(data.cursorPos, data.cursorPos);
+
+        const event = new Event('input', { bubbles: true });
+        this.inputRef.current.dispatchEvent(event);
       }
     });
 
@@ -94,9 +97,39 @@ export class Store extends DialogStore {
       this.tabs = tabs;
     });
 
-    this.loadHistory();
+    (async () => {
+      await this.loadHistory();
+    })();
 
     ipcRenderer.send(`can-show-${this.id}`);
+
+    this.onHide = (data) => {
+      ipcRenderer.send(`addressbar-update-input-${this.id}`, {
+        id: this.tabId,
+        text: this.inputRef.current.value,
+        selectionStart: this.inputRef.current.selectionStart,
+        selectionEnd: this.inputRef.current.selectionEnd,
+        ...data,
+      });
+
+      this.tabs = [];
+      this.inputRef.current.value = '';
+      this.suggestions.list = [];
+    };
+  }
+
+  public getCanSuggest(key: number) {
+    return (
+      key !== 8 && // backspace
+      key !== 13 && // enter
+      key !== 17 && // ctrl
+      key !== 18 && // alt
+      key !== 16 && // shift
+      key !== 9 && // tab
+      key !== 20 && // capslock
+      key !== 46 && // delete
+      key !== 32
+    );
   }
 
   public async loadHistory() {
@@ -111,7 +144,7 @@ export class Store extends DialogStore {
       this.autoComplete(input.value, lastSuggestion);
     }
 
-    suggestions.load(input).then(suggestion => {
+    suggestions.load(input).then((suggestion) => {
       lastSuggestion = suggestion;
       if (this.canSuggest) {
         this.autoComplete(

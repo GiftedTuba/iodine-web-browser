@@ -1,3 +1,5 @@
+/* Copyright (c) 2021-2022 SnailDOS */
+
 export const BLUE_500 = '#21b0f3';
 export const BLUE_300 = '#64B5F6';
 
@@ -18,8 +20,6 @@ export const LIGHT_BLUE_500 = '#03A9F4';
 export const TEAL_500 = '#009688';
 
 export const GREEN_500 = '#4CAF50';
-
-export const GREEN_300 = '#92f7a8';
 
 export const LIGHT_GREEN_500 = '#8BC34A';
 

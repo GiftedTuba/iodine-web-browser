@@ -1,28 +1,25 @@
+/* Copyright (c) 2021-2022 SnailDOS */
+
 import * as React from 'react';
 import { observer } from 'mobx-react-lite';
-import { createGlobalStyle, ThemeProvider } from 'styled-components';
-import { hot } from 'react-hot-loader/root';
+import { ThemeProvider } from 'styled-components';
 
-import { Style } from '../../style';
 import { StyledApp, Title, Domain } from './style';
 import store from '../../store';
+import { UIStyle } from '~/renderer/mixins/default-styles';
 
-const GlobalStyle = createGlobalStyle`${Style}`;
-
-export const App = hot(
-  observer(() => {
-    return (
-      <ThemeProvider theme={{ ...store.theme }}>
-        <StyledApp
-          style={{ marginLeft: 8 + store.x }}
-          xTransition={store.xTransition}
-          visible={store.visible}
-        >
-          <Title>{store.title}</Title>
-          <Domain>{store.domain}</Domain>
-          <GlobalStyle />
-        </StyledApp>
-      </ThemeProvider>
-    );
-  }),
-);
+export const App = observer(() => {
+  return (
+    <ThemeProvider theme={{ ...store.theme }}>
+      <UIStyle />
+      <StyledApp
+        style={{ transform: `translate3d(${store.x}px, 0, 0)` }}
+        xTransition={store.xTransition}
+        visible={store.visible}
+      >
+        <Title>{store.title}</Title>
+        <Domain>{store.domain}</Domain>
+      </StyledApp>
+    </ThemeProvider>
+  );
+});

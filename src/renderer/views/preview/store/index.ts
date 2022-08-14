@@ -1,28 +1,28 @@
+/* Copyright (c) 2021-2022 SnailDOS */
+
 import { ipcRenderer } from 'electron';
-import { observable, computed } from 'mobx';
-import { parse } from 'url';
+import { observable, computed, makeObservable } from 'mobx';
 import { WEBUI_BASE_URL, WEBUI_PROTOCOL } from '~/constants/files';
 import { DialogStore } from '~/models/dialog-store';
 
 export class Store extends DialogStore {
-  @observable
-  public title = '';
-
-  @observable
-  public url = '';
-
-  @observable
-  public x = 0;
-
-  @observable
-  public xTransition = false;
-
   private timeout: any;
   private timeout1: any;
 
-  @computed
+  // Observable
+
+  public title = '';
+
+  public url = '';
+
+  public x = 0;
+
+  public xTransition = false;
+
+  // Computed
+
   public get domain() {
-    const parsed = parse(this.url);
+    const parsed = new URL(this.url);
     if (
       WEBUI_BASE_URL.startsWith(WEBUI_PROTOCOL) &&
       this.url.startsWith(WEBUI_BASE_URL)
@@ -34,25 +34,37 @@ export class Store extends DialogStore {
       return 'local or shared file';
     }
 
+    if (parsed.protocol === 'http:') {
+      return 'Unsecure Website';
+    }
+    
     return parsed.hostname;
   }
 
-  public constructor() {
-    super();
+  constructor() {
+    super({ visibilityWrapper: false, persistent: true });
 
-    ipcRenderer.on('visible', (e, flag, tab) => {
+    makeObservable(this, {
+      title: observable,
+      url: observable,
+      x: observable,
+      xTransition: observable,
+      domain: computed,
+    });
+
+    ipcRenderer.on('visible', (e, visible, tab) => {
       clearTimeout(this.timeout);
       clearTimeout(this.timeout1);
 
-      if (!flag) {
-        this.visible = flag;
+      if (!visible) {
+        this.visible = false;
       }
 
-      if (flag) {
+      if (visible) {
         this.timeout1 = setTimeout(() => {
           this.xTransition = true;
         }, 80);
-      } else if (!flag) {
+      } else if (!visible) {
         this.timeout = setTimeout(() => {
           this.xTransition = false;
         }, 100);
@@ -63,8 +75,8 @@ export class Store extends DialogStore {
         this.url = tab.url;
         this.x = tab.x;
 
-        if (flag && this.title !== '' && this.url !== '') {
-          this.visible = flag;
+        if (visible && this.title !== '' && this.url !== '') {
+          this.visible = visible;
         }
       }
     });

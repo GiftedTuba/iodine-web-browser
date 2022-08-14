@@ -15,7 +15,7 @@
 
   WriteRegStr SHCTX "SOFTWARE\Clients\StartMenuInternet\Midori" "" "Midori"
   WriteRegStr SHCTX "SOFTWARE\Clients\StartMenuInternet\Midori\DefaultIcon" "" "$INSTDIR\Midori.exe,0"
-  WriteRegStr SHCTX "SOFTWARE\Clients\StartMenuInternet\Midori\Capabilities" "ApplicationDescription" "A privacy-focused, extensible and beautiful web browser"
+  WriteRegStr SHCTX "SOFTWARE\Clients\StartMenuInternet\Midori\Capabilities" "ApplicationDescription" "A privacy-focused, extensible and beautiful web browser, Free and open source."
   WriteRegStr SHCTX "SOFTWARE\Clients\StartMenuInternet\Midori\Capabilities" "ApplicationName" "Midori"
   WriteRegStr SHCTX "SOFTWARE\Clients\StartMenuInternet\Midori\Capabilities" "ApplicationIcon" "$INSTDIR\Midori.exe,0"
   WriteRegStr SHCTX "SOFTWARE\Clients\StartMenuInternet\Midori\Capabilities\FileAssociations" ".htm" "Midori"

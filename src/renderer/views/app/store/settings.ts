@@ -1,4 +1,6 @@
-import { observable, action } from 'mobx';
+/* Copyright (c) 2021-2022 SnailDOS */
+
+import { observable, action, computed, makeObservable } from 'mobx';
 import { ipcRenderer } from 'electron';
 
 import { ISettings } from '~/interfaces';
@@ -18,15 +20,20 @@ export type SettingsSection =
   | 'system';
 
 export class SettingsStore {
-  @observable
   public selectedSection: SettingsSection = 'appearance';
 
-  @observable
   public object: ISettings = DEFAULT_SETTINGS;
 
   public store: Store;
 
   public constructor(store: Store) {
+    makeObservable(this, {
+      selectedSection: observable,
+      object: observable,
+      searchEngine: computed,
+      updateSettings: action,
+    });
+
     this.store = store;
 
     let firstTime = false;
@@ -43,9 +50,19 @@ export class SettingsStore {
     });
   }
 
-  @action
+  public get searchEngine() {
+    return this.object.searchEngines[this.object.searchEngine];
+  }
+
   public updateSettings(newSettings: ISettings) {
+    const prevState = { ...this.object };
     this.object = { ...this.object, ...newSettings };
+
+    if (prevState.topBarVariant !== newSettings.topBarVariant) {
+      requestAnimationFrame(() => {
+        this.store.tabs.updateTabsBounds(true);
+      });
+    }
   }
 
   public async save() {

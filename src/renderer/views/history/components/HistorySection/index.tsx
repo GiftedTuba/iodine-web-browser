@@ -1,3 +1,5 @@
+/* Copyright (c) 2021-2022 SnailDOS */
+
 import * as React from 'react';
 
 import HistoryItem from '../HistoryItem';
@@ -10,7 +12,7 @@ export const HistorySection = observer(
     return (
       <EmptySection>
         <SectionTitle>{data.label}</SectionTitle>
-        {data.items.map(item => (
+        {data.items.map((item) => (
           <HistoryItem key={item._id} data={item} />
         ))}
       </EmptySection>

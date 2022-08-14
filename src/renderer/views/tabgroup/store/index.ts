@@ -1,3 +1,5 @@
+/* Copyright (c) 2021-2022 SnailDOS */
+
 import { ipcRenderer } from 'electron';
 import * as React from 'react';
 import { Textfield } from '~/renderer/components/Textfield';
@@ -10,17 +12,16 @@ export class Store extends DialogStore {
 
   public constructor() {
     super();
+    this.init();
+  }
 
-    ipcRenderer.on('visible', (e, flag, tabGroup) => {
-      this.visible = flag;
+  public async init() {
+    const tabGroup = await this.invoke('tabgroup');
 
-      if (flag) {
-        this.tabGroupId = tabGroup.id;
-        this.inputRef.current.inputRef.current.focus();
-        this.inputRef.current.inputRef.current.value = tabGroup.name;
-        this.inputRef.current.inputRef.current.select();
-      }
-    });
+    this.tabGroupId = tabGroup.id;
+    this.inputRef.current.inputRef.current.focus();
+    this.inputRef.current.inputRef.current.value = tabGroup.name;
+    this.inputRef.current.inputRef.current.select();
   }
 }
 

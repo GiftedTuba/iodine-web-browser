@@ -1,27 +1,41 @@
 /* eslint-disable */
 const { resolve, join } = require('path');
-const merge = require('webpack-merge');
+const { writeFileSync, readFileSync, existsSync } = require('fs');
+const { merge } = require('webpack-merge');
+const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
 const createStyledComponentsTransformer = require('typescript-plugin-styled-components')
   .default;
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
-const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
+const TerserPlugin = require('terser-webpack-plugin');
+const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 /* eslint-enable */
 
 const INCLUDE = resolve(__dirname, 'src');
 
-const dev = process.env.ENV === 'dev';
+const BUILD_FLAGS = {
+  ENABLE_EXTENSIONS: true,
+  ENABLE_AUTOFILL: false,
+};
+
+process.env = {
+  ...process.env,
+  ...BUILD_FLAGS,
+};
+
+const dev = process.env.DEV === '1';
+
+process.env.NODE_ENV = dev ? 'development' : 'production';
 
 const styledComponentsTransformer = createStyledComponentsTransformer({
-  minify: true,
+  minify: !dev,
   displayName: dev,
 });
 
 const config = {
   mode: dev ? 'development' : 'production',
 
-  devtool: dev ? 'eval-source-map' : 'none',
+  devtool: dev ? 'eval-source-map' : false,
 
   output: {
     path: resolve(__dirname, 'build'),
@@ -38,6 +52,7 @@ const config = {
             loader: 'file-loader',
             options: {
               esModule: false,
+              outputPath: 'res',
             },
           },
         ],
@@ -48,8 +63,8 @@ const config = {
           {
             loader: 'ts-loader',
             options: {
-              experimentalWatchApi: true,
-              transpileOnly: true,
+              experimentalWatchApi: dev,
+              transpileOnly: true, // |dev| to throw CI when a ts error occurs
               getCustomTransformers: () => ({
                 before: [styledComponentsTransformer],
               }),
@@ -59,13 +74,6 @@ const config = {
 
         include: INCLUDE,
       },
-      /*{
-        test: /\.node$/,
-        loader: 'awesome-node-loader',
-        options: {
-          name: '[contenthash].[ext]',
-        },
-      },*/
     ],
   },
 
@@ -80,65 +88,87 @@ const config = {
     alias: {
       '~': INCLUDE,
     },
+    plugins: [new TsconfigPathsPlugin()],
   },
 
   plugins: [
-    // new BundleAnalyzerPlugin()
+    new webpack.EnvironmentPlugin(['NODE_ENV', ...Object.keys(BUILD_FLAGS)]),
   ],
 
   externals: {
     keytar: `require('keytar')`,
+    electron: 'require("electron")',
+    fs: 'require("fs")',
+    os: 'require("os")',
+    path: 'require("path")',
+  },
+
+  optimization: {
+    minimizer: !dev
+      ? [
+          new TerserPlugin({
+            extractComments: true,
+            terserOptions: {
+              ecma: 8,
+              output: {
+                comments: false,
+              },
+            },
+            parallel: true,
+          }),
+        ]
+      : [],
   },
 };
+
+if (dev) {
+  config.module.rules[1].use.splice(0, 0, {
+    loader: 'babel-loader',
+    options: { plugins: ['react-refresh/babel'] },
+  });
+}
 
 function getConfig(...cfg) {
   return merge(config, ...cfg);
 }
 
-const getHtml = (scope, name) => {
+const getHtml = (name) => {
   return new HtmlWebpackPlugin({
-    title: 'Midori Next',
+    title: 'Midori',
     template: 'static/pages/app.html',
     filename: `${name}.html`,
-    chunks: [`vendor.${scope}`, name],
+    chunks: [name],
   });
 };
 
-const applyEntries = (scope, config, entries) => {
+const applyEntries = (config, entries) => {
   for (const entry of entries) {
-    config.entry[entry] = [`./src/renderer/views/${entry}`];
-    config.plugins.push(getHtml(scope, entry));
-
-    if (dev) {
-      config.entry[entry].unshift('react-hot-loader/patch');
-    }
+    config.entry[entry] = [
+      `./src/renderer/pre-entry`,
+      `./src/renderer/views/${entry}`,
+    ];
+    config.plugins.push(getHtml(entry));
   }
 };
 
-const getBaseConfig = name => {
+const getBaseConfig = (name) => {
   const config = {
     plugins: [],
 
     output: {},
+
     entry: {},
 
     optimization: {
+      runtimeChunk: {
+        name: `runtime.${name}`,
+      },
       splitChunks: {
-        cacheGroups: {
-          vendor: {
-            chunks: 'initial',
-            name: `vendor.${name}`,
-            minChunks: 2,
-          },
-        },
+        chunks: 'all',
+        maxInitialRequests: Infinity,
       },
     },
   };
-
-  if (dev) {
-    config.plugins.push(new ForkTsCheckerWebpackPlugin());
-    config.plugins.push(new HardSourceWebpackPlugin());
-  }
 
   return config;
 };

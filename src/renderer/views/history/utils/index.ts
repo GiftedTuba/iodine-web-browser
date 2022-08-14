@@ -1,3 +1,5 @@
+/* Copyright (c) 2021-2022 SnailDOS */
+
 import { daysList, monthsList } from '~/renderer/constants/dictionary';
 
 export const compareDates = (first: Date, second: Date) => {
@@ -21,7 +23,7 @@ export const getSectionLabel = (date: Date) => {
     if (current.getDate() === date.getDate()) {
       prefix = 'Today - ';
     } else if (current.getDate() - 1 === date.getDate()) {
-      prefix = 'Yesterday - ';
+      prefix = 'Yesturday - ';
     }
   }
 
@@ -34,8 +36,5 @@ export const formatTime = (date: Date) => {
   return `${date
     .getHours()
     .toString()
-    .padStart(2, '0')}:${date
-    .getMinutes()
-    .toString()
-    .padStart(2, '0')}`;
+    .padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
 };

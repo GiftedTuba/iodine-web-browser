@@ -1,33 +1,20 @@
+/* Copyright (c) 2021-2022 SnailDOS */
+
 import styled, { css } from 'styled-components';
 import { ITheme } from '~/interfaces';
 import { maxLines } from '~/renderer/mixins';
 import { TAB_MAX_WIDTH } from '~/renderer/views/app/constants/tabs';
+import { PersistentDialogStyle } from '~/renderer/mixins/dialogs';
 
-export const StyledApp = styled.div`
-  margin: 8px;
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
-  border-radius: 6px;
-  overflow: hidden;
-  position: relative;
+export const StyledApp = styled(PersistentDialogStyle)`
+  margin: 0;
   padding: 12px;
   font-size: 13px;
   max-width: ${TAB_MAX_WIDTH}px;
 
-  ${({
-    visible,
-    theme,
-    xTransition,
-  }: {
-    visible: boolean;
-    theme?: ITheme;
-    xTransition: boolean;
-  }) => css`
-    opacity: ${visible ? 1 : 0};
-    margin-top: ${visible ? 0 : 7}px;
-    background-color: ${theme['dialog.backgroundColor']};
+  ${({ theme, xTransition }: { theme?: ITheme; xTransition: boolean }) => css`
     color: ${theme['dialog.textColor']};
-    transition: 0.2s opacity,
-      0.2s margin-top ${xTransition ? ', 0.08s margin-left' : ''};
+    transition: 0.15s opacity ${xTransition ? ', 0.08s transform' : ''};
   `}
 `;
 
@@ -40,7 +27,6 @@ export const Title = styled.div`
 
 export const Domain = styled.div`
   opacity: 0.7;
-  font-weight: 300;
   line-height: 1.3rem;
 `;
 

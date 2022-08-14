@@ -1,3 +1,11 @@
+/* Copyright (c) 2021-2022 SnailDOS */
+
+import {
+  FONT_ROBOTO_REGULAR,
+  FONT_ROBOTO_MEDIUM,
+  FONT_ROBOTO_LIGHT,
+} from '../constants';
+
 export const getLetterSpacing = (fontSize: number, tracking: number) =>
   tracking / fontSize;
 
@@ -102,3 +110,30 @@ export const maxLines = (count: number, lineHeight?: number) => `
   -webkit-line-clamp: ${count};
   -webkit-box-orient: vertical;
 `;
+
+export const injectFonts = () => {
+  const styleElement = document.createElement('style');
+
+  styleElement.textContent = `
+@font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 400;
+  src: url(${FONT_ROBOTO_REGULAR}) format('woff2');
+}
+@font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 500;
+  src: url(${FONT_ROBOTO_MEDIUM}) format('woff2');
+}
+@font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 300;
+  src: url(${FONT_ROBOTO_LIGHT}) format('woff2');
+}
+`;
+
+  document.head.appendChild(styleElement);
+};

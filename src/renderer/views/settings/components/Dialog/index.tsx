@@ -1,3 +1,5 @@
+/* Copyright (c) 2021-2022 SnailDOS */
+
 import * as React from 'react';
 import styled, { css } from 'styled-components';
 
@@ -30,9 +32,9 @@ export const Dialog = styled.div`
   ${robotoRegular()};
 
   ${({ visible }: { visible: boolean }) => css`
-    pointer-events: ${visible ? 'auto' : 'none'};
+    pointer-events: ${visible ? 'inherit' : 'none'};
     opacity: ${visible ? 1 : 0};
-    transform: ${visible ? 'translateY(0)' : 'translateY(-24px)'};
+    transform: ${visible ? 'translate3d(0, 0, 0)' : 'translate3d(0, -24px, 0)'};
   `}
 `;
 

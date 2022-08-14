@@ -1,27 +1,20 @@
+/* Copyright (c) 2021-2022 SnailDOS */
+
 import styled, { css } from 'styled-components';
 
-import { robotoRegular } from '~/renderer/mixins';
 import { ITheme } from '~/interfaces';
+import { DialogStyle } from '~/renderer/mixins/dialogs';
 
-export const StyledApp = styled.div<{ theme?: ITheme; visible: boolean }>`
-  margin: 8px;
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
-  border-radius: 6px;
-  overflow: hidden;
-  position: relative;
-  transition: 0.2s opacity, 0.2s margin-top;
-  padding: 16px;
-
-  & .textfield,
-  .dropdown {
-    width: 255px;
-    margin-left: auto;
-  }
-
-  ${({ visible, theme }) => css`
-    opacity: ${visible ? 1 : 0};
-    margin-top: ${visible ? 3 : 10}px;
-    background-color: ${theme['dialog.backgroundColor']};
+interface AppProps {
+  theme?: ITheme;
+  visible: boolean;
+}
+export const StyledApp = styled(DialogStyle)<AppProps>`
+  padding: 20px;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  ${({ theme }) => css`
     color: ${theme['dialog.lightForeground'] ? '#fff' : '#000'};
   `}
 `;
@@ -34,8 +27,8 @@ export const Subtitle = styled.div`
 
 export const Title = styled.div`
   font-size: 16px;
-  margin-bottom: 16px;
-  ${robotoRegular()};
+  margin-bottom: 10px;
+  font-weight: bold;
 `;
 
 export const Row = styled.div`
@@ -45,8 +38,16 @@ export const Row = styled.div`
   display: flex;
 `;
 
+export const Col = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px;
+`;
+
 export const Label = styled.div`
-  font-size: 12px;
+  font-size: 13px;
+  margin-bottom: 5px;
 `;
 
 export const Buttons = styled.div`
@@ -54,8 +55,31 @@ export const Buttons = styled.div`
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  margin-top: 16px;
+  margin-top: 6px;
   & .button:not(:last-child) {
     margin-right: 8px;
   }
+`;
+
+export const Select = styled.select<{
+  theme: ITheme;
+}>`
+  height: 40px;
+  min-width: 200px;
+  position: relative;
+  border-radius: 8px;
+  user-select: none;
+  cursor: pointer;
+  display: flex;
+  border: 0;
+  padding: 0.3rem;
+  align-items: center;
+  -webkit-appearance: none;
+  ${({ theme }) => css`
+    background-color: ${theme['control.backgroundColor']};
+
+    &:hover {
+      background-color: ${theme['control.hover.backgroundColor']};
+    }
+  `}
 `;

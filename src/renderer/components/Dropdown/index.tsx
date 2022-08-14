@@ -1,3 +1,5 @@
+/* Copyright (c) 2021-2022 SnailDOS */
+
 import * as React from 'react';
 
 import {
@@ -21,6 +23,7 @@ interface Props {
   children?: any;
   defaultValue?: any;
   onChange?: (newValue?: any, oldValue?: any) => void;
+  onMouseDown?: (e: React.MouseEvent<any>) => void;
   style?: any;
 }
 
@@ -85,12 +88,14 @@ export class Dropdown extends React.PureComponent<Props, State> {
     this.toggleMenu(false);
   };
 
-  private onItemMouseDown = (e: React.MouseEvent) => {
+  private onItemMouseDown = (e: React.MouseEvent<any>) => {
     e.stopPropagation();
   };
 
-  private onMouseDown = (e: React.MouseEvent) => {
+  private onMouseDown = (e: React.MouseEvent<any>) => {
     e.stopPropagation();
+
+    if (this.props.onMouseDown) this.props.onMouseDown(e);
 
     const { expanded } = this.state;
     this.toggleMenu(!expanded);
@@ -113,14 +118,13 @@ export class Dropdown extends React.PureComponent<Props, State> {
         <Label>{label}</Label>
         <DropIcon expanded={expanded} />
         <ContextMenu style={{ top: 32, width: '100%' }} visible={expanded}>
-          {React.Children.map(children, child => {
+          {React.Children.map(children, (child) => {
             const { props } = child;
 
             return React.cloneElement(child, {
               selected: value === props.value,
               onClick: this.onItemClick(props.value),
               onMouseDown: this.onItemMouseDown,
-              dense: true,
             });
           })}
         </ContextMenu>

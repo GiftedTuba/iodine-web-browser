@@ -1,20 +1,22 @@
-import { observable } from 'mobx';
+/* Copyright (c) 2021-2022 SnailDOS */
+
+import { makeObservable, observable } from 'mobx';
 import { ipcRenderer } from 'electron';
 
 import { getDomain } from '~/utils';
 import { DialogStore } from '~/models/dialog-store';
 
 export class Store extends DialogStore {
-  @observable
   public permissions: string[] = [];
 
-  @observable
-  public domain: string;
+  public domain = '';
 
   public constructor() {
-    super();
+    super({ hideOnBlur: false });
 
-    ipcRenderer.on('request-permission', (e, { url, name, details }) => {
+    makeObservable(this, { permissions: observable, domain: observable });
+
+    ipcRenderer.on('update-tab-info', (e, tabId, { url, name, details }) => {
       this.domain = getDomain(url);
       this.permissions = [];
 

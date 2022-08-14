@@ -1,44 +1,51 @@
-import { ipcMain } from 'electron';
-import { AppWindow } from '../windows';
-import { TOOLBAR_HEIGHT } from '~/constants/design';
-import { Dialog } from '.';
+/* Copyright (c) 2021-2022 SnailDOS */
 
-const WIDTH = 400;
-const HEIGHT = 500;
+import { VIEW_Y_OFFSET } from '~/constants/design';
+import { BrowserWindow } from 'electron';
+import { Application } from '../application';
 
-export class AuthDialog extends Dialog {
-  public constructor(appWindow: AppWindow) {
-    super(appWindow, {
+export const requestAuth = (
+  browserWindow: BrowserWindow,
+  url: string,
+  tabId: number,
+): Promise<{ username: string; password: string }> => {
+  return new Promise((resolve, reject) => {
+    const appWindow = Application.instance.windows.fromBrowserWindow(
+      browserWindow,
+    );
+
+    const tab = appWindow.viewManager.views.get(tabId);
+    tab.requestedAuth = { url };
+
+    const dialog = Application.instance.dialogs.show({
       name: 'auth',
-      bounds: {
-        width: WIDTH,
-        height: HEIGHT,
-        y: TOOLBAR_HEIGHT,
+      browserWindow,
+      getBounds: () => {
+        const { width } = browserWindow.getContentBounds();
+        return {
+          width: 400,
+          height: 500,
+          x: width / 2 - 400 / 2,
+          y: VIEW_Y_OFFSET,
+        };
+      },
+      tabAssociation: {
+        tabId,
+        getTabInfo: (tabId) => {
+          const tab = appWindow.viewManager.views.get(tabId);
+          return tab.requestedAuth;
+        },
+      },
+      onWindowBoundsUpdate: (disposition) => {
+        if (disposition === 'resize') dialog.rearrange();
       },
     });
-  }
 
-  public requestAuth(
-    url: string,
-  ): Promise<{ username: string; password: string }> {
-    return new Promise(resolve => {
-      this.show();
+    if (!dialog) return;
 
-      this.webContents.send('request-auth', url);
-
-      ipcMain.once(`request-auth-result-${this.appWindow.id}`, (e, result) => {
-        this.hide();
-        resolve(result);
-      });
+    dialog.on('result', (e, result) => {
+      resolve(result);
+      dialog.hide();
     });
-  }
-
-  public rearrange() {
-    const { width } = this.appWindow.getContentBounds();
-
-    super.rearrange({
-      x: Math.round(width / 2 - WIDTH / 2),
-      y: TOOLBAR_HEIGHT,
-    });
-  }
-}
+  });
+};

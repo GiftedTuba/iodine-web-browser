@@ -1,6 +1,7 @@
-import { ipcRenderer } from 'electron';
+/* Copyright (c) 2021-2022 SnailDOS */
 
-import { makeId } from '~/utils';
+import { ipcRenderer } from 'electron';
+import { toJS } from 'mobx';
 
 interface IAction<T> {
   item?: Partial<T>;
@@ -10,7 +11,7 @@ interface IAction<T> {
 }
 
 export class Database<T> {
-  private scope: string;
+  private readonly scope: string;
 
   public constructor(scope: string) {
     this.scope = scope;
@@ -20,17 +21,9 @@ export class Database<T> {
     operation: 'get' | 'get-one' | 'update' | 'insert' | 'remove',
     data: IAction<T>,
   ): Promise<any> {
-    return new Promise(resolve => {
-      const id = makeId(32);
-
-      ipcRenderer.send(`storage-${operation}`, id, {
-        scope: this.scope,
-        ...data,
-      });
-
-      ipcRenderer.once(id, (e, res) => {
-        resolve(res);
-      });
+    return await ipcRenderer.invoke(`storage-${operation}`, {
+      scope: this.scope,
+      ...toJS(data),
     });
   }
 

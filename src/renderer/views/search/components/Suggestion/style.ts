@@ -1,5 +1,7 @@
+/* Copyright (c) 2021-2022 SnailDOS */
+
 import styled, { css } from 'styled-components';
-import { transparency } from '~/renderer/constants';
+import { transparency, BLUE_300, BLUE_500 } from '~/renderer/constants';
 import { ITheme } from '~/interfaces';
 import { body2, centerIcon } from '~/renderer/mixins';
 
@@ -22,11 +24,11 @@ export const StyledSuggestion = styled.div`
   }) => {
     let backgroundColor = 'transparent';
     if (selected) {
-      backgroundColor = theme['searchBox.suggestions.lightForeground']
+      backgroundColor = theme['searchBox.lightForeground']
         ? 'rgba(255, 255, 255, 0.06)'
         : 'rgba(0, 0, 0, 0.06)';
     } else if (hovered) {
-      backgroundColor = theme['searchBox.suggestions.lightForeground']
+      backgroundColor = theme['searchBox.lightForeground']
         ? 'rgba(255, 255, 255, 0.03)'
         : 'rgba(0, 0, 0, 0.03)';
     }
@@ -36,31 +38,38 @@ export const StyledSuggestion = styled.div`
   }};
 `;
 
-export const PrimaryText = styled.div`
-  ${body2()};
-  margin-left: 16px;
+export const SuggestionText = styled.div`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  font-size: 13px;
+  font-size: 14px;
+`;
+
+export const PrimaryText = styled(SuggestionText)`
   opacity: ${transparency.text.high};
 `;
 
-export const SecondaryText = styled.div`
-  ${body2()};
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+export const RightText = styled(SuggestionText)`
   padding-right: 16px;
-  font-size: 13px;
+  flex: 1;
+`;
+
+export const Url = styled(RightText)`
+  ${({ theme }: { theme?: ITheme }) => css`
+    color: ${theme['searchBox.lightForeground'] ? BLUE_300 : '#3297FD'};
+  `}
+`;
+
+export const SecondaryText = styled(RightText)`
   opacity: ${transparency.text.medium};
 `;
 
 export const Icon = styled.div`
-  margin-left: 16px;
+  margin-left: 11px;
   width: 16px;
   min-width: 16px;
   height: 16px;
+  margin-right: 12px;
   ${centerIcon()};
 `;
 

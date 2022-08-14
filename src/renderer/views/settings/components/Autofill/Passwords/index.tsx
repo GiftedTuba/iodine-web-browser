@@ -1,8 +1,9 @@
+/* Copyright (c) 2021-2022 SnailDOS */
+
 import * as React from 'react';
 import { observer } from 'mobx-react-lite';
 
 import store from '../../../store';
-import { icons } from '~/renderer/constants';
 import { IFormFillData } from '~/interfaces';
 import { Section, onMoreClick } from '../Section';
 import { getUserPassword } from '~/preloads/utils/autofill';
@@ -10,11 +11,11 @@ import {
   Container,
   HeaderLabel,
   Wrapper,
-  Icon,
   Label,
   PasswordIcon,
   More,
 } from './styles';
+import { ICON_KEY } from '~/renderer/constants';
 
 const Item = observer(({ data }: { data: IFormFillData }) => {
   const { url, favicon, fields } = data;
@@ -49,12 +50,12 @@ const Item = observer(({ data }: { data: IFormFillData }) => {
 
 export const Passwords = observer(() => {
   return (
-    <Section label="Passwords" icon={icons.key}>
+    <Section label="Passwords" icon={ICON_KEY}>
       <Container>
         <HeaderLabel>Website</HeaderLabel>
         <HeaderLabel>Username</HeaderLabel>
         <HeaderLabel>Password</HeaderLabel>
-        {store.autoFill.credentials.map(item => (
+        {store.autoFill.credentials.map((item) => (
           <Item key={item._id} data={item} />
         ))}
       </Container>

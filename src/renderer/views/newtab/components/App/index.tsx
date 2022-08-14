@@ -1,19 +1,42 @@
+/* Copyright (c) 2021-2022 SnailDOS */
+
 import * as React from 'react';
 import { observer } from 'mobx-react-lite';
-import { hot } from 'react-hot-loader/root';
 
 import store from '../../store';
-import { Style } from '../../style';
-import { createGlobalStyle, ThemeProvider } from 'styled-components';
-import { Wrapper, Content, IconItem, Menu, Image, Refresh } from './style';
+import { ThemeProvider } from 'styled-components';
+import { Wrapper, Content, IconItem, Menu, Image, RightBar, StyledForecast, StyledTime } from './style';
 import { TopSites } from '../TopSites';
-import { icons } from '~/renderer/constants';
-import { WEBUI_BASE_URL, WEBUI_URL_SUFFIX } from '~/constants/files';
+import { News } from '../News';
+import { Preferences } from '../Preferences';
+import {
+  ICON_TUNE,
+  ICON_SETTINGS,
+  ICON_HISTORY,
+  ICON_BOOKMARKS,
+  ICON_EXTENSIONS,
+} from '~/renderer/constants/icons';
+import { WebUIStyle } from '~/renderer/mixins/default-styles';
+import { useQuery } from 'react-query';
+import { QueryClientProvider, QueryClient } from 'react-query';
+import { getWebUIURL } from '~/common/webui';
 
-const GlobalStyle = createGlobalStyle`${Style}`;
+const queryClient = new QueryClient();
+
+window.addEventListener('mousedown', () => {
+  store.dashboardSettingsVisible = false;
+});
 
 const onIconClick = (name: string) => () => {
-  window.location.href = `${WEBUI_BASE_URL}${name}${WEBUI_URL_SUFFIX}`;
+  window.location.href = getWebUIURL(name);
+};
+
+const onTuneClick = () => {
+  store.dashboardSettingsVisible = !store.dashboardSettingsVisible;
+};
+
+const onExtensionClick = () => {
+  window.location.href = 'https://chrome.google.com/webstore/category/extensions';
 };
 
 const onRefreshClick = () => {
@@ -24,51 +47,113 @@ const onRefreshClick = () => {
   }, 50);
 };
 
-export default hot(
-  observer(() => {
-    return (
-      <ThemeProvider theme={{ ...store.theme }}>
-        <div>
-          <GlobalStyle />
-          <Wrapper>
-            <Image src={store.image}></Image>
+const Time = () => {
+  return (
+    <StyledTime>
+      <h1>{new Date().toLocaleTimeString([], { timeStyle: 'short' })}</h1>
+    </StyledTime>
+  );
+};
 
-            <Content>
-              <TopSites></TopSites>
-            </Content>
+const Forecast = () => {
+  const { data: forecast } = useQuery(['weather'], async () => {
+    try {
+      const res = await (await fetch(`https://wttr.in/?format=%c%20%C`)).text();
+      return res;
+    } catch {
+      return 'Failed to load weather :(';
+    }
+  });
+  
+  return (
+    <StyledForecast>
+      {new Date().toLocaleDateString([], {
+        month: 'long',
+        day: '2-digit',
+      })}
+      {' - '}
+      {forecast}
+    </StyledForecast>
+  );
+};
 
+export default observer(() => {
+  if (store.settings.notnew != "false") {
+    window.location.replace(getWebUIURL("welcome"))
+  } else {
+    if (store.settings.changelog != "10.0.2") {
+      window.location.replace(getWebUIURL("changelog"))
+  }
+  }
+
+
+  return (
+    <QueryClientProvider client={queryClient}>
+    <ThemeProvider theme={{ ...store.theme }}>
+      <div>
+        <WebUIStyle />
+
+        <Preferences />
+
+        <Wrapper fullSize={store.fullSizeImage}>
+
+          <Image src={store.imageVisible ? store.image : ''}></Image>
+          <Content>
+          <Time />
+          <Forecast />
+          {store.topSitesVisible && <TopSites></TopSites>}
+          </Content>
+
+          <RightBar>
+            <IconItem
+              imageSet={store.imageVisible}
+              title="Configure landing page"
+              icon={ICON_TUNE}
+              onMouseDown={(e) => e.stopPropagation()}
+              onClick={onTuneClick}
+            ></IconItem>
+          </RightBar>
+          {store.quickMenuVisible && (
             <Menu>
               <IconItem
+                imageSet={store.imageVisible}
                 title="Settings"
-                icon={icons.settings}
+                icon={ICON_SETTINGS}
                 onClick={onIconClick('settings')}
               ></IconItem>
               <IconItem
+                imageSet={store.imageVisible}
                 title="History"
-                icon={icons.history}
+                icon={ICON_HISTORY}
                 onClick={onIconClick('history')}
               ></IconItem>
               <IconItem
+                imageSet={store.imageVisible}
                 title="Bookmarks"
-                icon={icons.bookmarks}
+                icon={ICON_BOOKMARKS}
                 onClick={onIconClick('bookmarks')}
               ></IconItem>
               <IconItem
-                title="Downloads"
-                icon={icons.download}
-                onClick={onIconClick('downloads')}
-              ></IconItem>
-              <IconItem
+                imageSet={store.imageVisible}
                 title="Extensions"
-                icon={icons.extensions}
-                onClick={onIconClick('extensions')}
+                icon={ICON_EXTENSIONS}
+                onClick={onExtensionClick}
               ></IconItem>
+              {/*
+              <IconItem
+                imageSet={store.imageVisible}
+                title="Descargas"
+                icon={ICON_DOWNLOAD}
+                onClick={onIconClick('downloads')}
+              ></IconItem> */}
             </Menu>
-
-            <Refresh icon={icons.refresh} onClick={onRefreshClick}></Refresh>
-          </Wrapper>
-        </div>
-      </ThemeProvider>
-    );
-  }),
-);
+          )}
+        </Wrapper>
+        {store.newsBehavior !== 'hidden' && (
+            <News></News>
+        )}
+      </div>
+    </ThemeProvider>
+    </QueryClientProvider>
+  );
+});

@@ -1,49 +1,62 @@
-import { ipcMain } from 'electron';
-import { TOOLBAR_HEIGHT } from '~/constants/design';
-import { AppWindow } from '../windows';
-import { Dialog } from '.';
+/* Copyright (c) 2021-2022 SnailDOS */
 
-const HEIGHT = 175;
-const WIDTH = 350;
+import { VIEW_Y_OFFSET } from '~/constants/design';
+import { BrowserWindow } from 'electron';
+import { Application } from '../application';
+import { IDialog } from '~/main/services/dialogs-service';
 
-export class PermissionsDialog extends Dialog {
-  public constructor(appWindow: AppWindow) {
-    super(appWindow, {
+export const requestPermission = (
+  browserWindow: BrowserWindow,
+  name: string,
+  url: string,
+  details: any,
+  tabId: number,
+): Promise<boolean> => {
+  return new Promise(async (resolve, reject) => {
+    if (
+      name === 'unknown' ||
+      (name === 'media' && details.mediaTypes.length === 0) ||
+      name === 'midiSysex'
+    ) {
+      return reject('Unknown permission');
+    }
+
+    const appWindow = Application.instance.windows.fromBrowserWindow(
+      browserWindow,
+    );
+
+    appWindow.viewManager.selected.requestedPermission = { name, url, details };
+
+    const dialog: IDialog = await Application.instance.dialogs.show({
       name: 'permissions',
-      bounds: {
-        height: HEIGHT,
-        width: WIDTH,
-        y: TOOLBAR_HEIGHT,
+      browserWindow,
+      getBounds: () => ({
+        width: 366,
+        height: 165,
         x: 0,
+        y: VIEW_Y_OFFSET,
+      }),
+      tabAssociation: {
+        tabId,
+        getTabInfo: (tabId) => {
+          const tab = appWindow.viewManager.views.get(tabId);
+          return tab.requestedPermission;
+        },
+        setTabInfo: (tabId, info) => {
+          const tab = appWindow.viewManager.views.get(tabId);
+          tab.requestedPermission = info;
+        },
+      },
+      onWindowBoundsUpdate: (disposition) => {
+        if (disposition === 'resize') dialog.rearrange();
       },
     });
-  }
 
-  public async requestPermission(
-    name: string,
-    url: string,
-    details: any,
-  ): Promise<boolean> {
-    return new Promise((resolve, reject) => {
-      if (
-        name === 'unknown' ||
-        (name === 'media' && details.mediaTypes.length === 0) ||
-        name === 'midiSysex'
-      ) {
-        return reject('Unknown permission');
-      }
+    if (!dialog) return;
 
-      this.show();
-
-      this.webContents.send('request-permission', { name, url, details });
-
-      ipcMain.once(
-        `request-permission-result-${this.appWindow.id}`,
-        (e, r: boolean) => {
-          resolve(r);
-          this.hide();
-        },
-      );
+    dialog.on('result', (e, result) => {
+      resolve(result);
+      dialog.hide();
     });
-  }
-}
+  });
+};

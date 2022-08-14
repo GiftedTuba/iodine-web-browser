@@ -1,6 +1,8 @@
+/* Copyright (c) 2021-2022 SnailDOS */
+
 const umbraOpacity = 0.2;
 const penumbraOpacity = 0.14;
-const ambientOpacity = 0.12;
+const ambientOpacity = 0.14;
 
 const umbraMap = [
   '0px 0px 0px 0px',

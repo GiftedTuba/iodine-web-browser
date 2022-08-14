@@ -1,3 +1,5 @@
+/* Copyright (c) 2021-2022 SnailDOS */
+
 import { IHistoryItem, IVisitedItem } from '~/interfaces';
 
 export const countVisitedTimes = (hItems: IHistoryItem[]): IVisitedItem[] => {
@@ -6,7 +8,7 @@ export const countVisitedTimes = (hItems: IHistoryItem[]): IVisitedItem[] => {
 
   for (const historyItem of historyItems) {
     const itemsWithUrl = historyItems.filter(
-      x => x.url.replace(/\//g, '') === historyItem.url.replace(/\//g, ''),
+      (x) => x.url.replace(/\//g, '') === historyItem.url.replace(/\//g, ''),
     );
 
     const itemToPush = {
@@ -16,11 +18,11 @@ export const countVisitedTimes = (hItems: IHistoryItem[]): IVisitedItem[] => {
 
     if (
       !items.find(
-        x => x.url.replace(/\//g, '') === historyItem.url.replace(/\//g, ''),
+        (x) => x.url.replace(/\//g, '') === historyItem.url.replace(/\//g, ''),
       )
     ) {
       if (itemToPush.favicon === '') {
-        const item = itemsWithUrl.find(x => x.favicon !== '');
+        const item = itemsWithUrl.find((x) => x.favicon !== '');
         if (item) {
           itemToPush.favicon = item.favicon;
         }

@@ -1,17 +1,19 @@
-import { observable } from 'mobx';
-import { ipcRenderer } from 'electron';
+/* Copyright (c) 2021-2022 SnailDOS */
+
+import { makeObservable, observable } from 'mobx';
 import { DialogStore } from '~/models/dialog-store';
 
 export class Store extends DialogStore {
-  @observable
-  public url: string;
+  public url = '';
 
   public constructor() {
-    super({ hideOnBlur: false });
+    super({ hideOnBlur: false, visibilityWrapper: false });
 
-    ipcRenderer.on('request-auth', (e, url) => {
-      this.url = url;
-    });
+    makeObservable(this, { url: observable });
+
+    this.onUpdateTabInfo = (tabId, auth) => {
+      this.url = auth.url;
+    };
   }
 }
 

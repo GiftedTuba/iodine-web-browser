@@ -1,3 +1,5 @@
+/* Copyright (c) 2021-2022 SnailDOS */
+
 import * as React from 'react';
 
 interface Props {
@@ -33,7 +35,7 @@ export default class RadioButtons extends React.PureComponent<Props, State> {
 
     return (
       <>
-        {React.Children.map(children, child => {
+        {React.Children.map(children, (child) => {
           return React.cloneElement(child, {
             selected: this.value === child.props.value,
             onSelect: this.onSelect,

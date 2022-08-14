@@ -1,11 +1,12 @@
+/* Copyright (c) 2021-2022 SnailDOS */
+
 import styled, { css } from 'styled-components';
 
 import { ITheme } from '~/interfaces';
 import { centerIcon } from '~/renderer/mixins';
-import { icons } from '~/renderer/constants';
+import { ICON_DROPDOWN } from '~/renderer/constants/icons';
 
 export const Control = css`
-  width: 200px;
   height: 32px;
   position: relative;
   border: none;
@@ -26,7 +27,9 @@ export const Control = css`
   `}
 `;
 
-export const Input = styled.input`
+export const Input = styled.input.attrs(() => ({
+  spellCheck: false,
+}))`
   ${Control}
 `;
 
@@ -40,7 +43,7 @@ export const Dropdown = styled.div`
     height: 20px;
     width: 20px;
     ${centerIcon()};
-    background-image: url(${icons.dropDown});
+    background-image: url(${ICON_DROPDOWN});
 
     ${({ dark }: { dark: boolean }) => css`
       filter: ${dark ? 'invert(100%)' : 'none'};

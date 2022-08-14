@@ -1,5 +1,7 @@
+/* Copyright (c) 2021-2022 SnailDOS */
+
 import { AppWindow } from '../windows';
-import { clipboard, nativeImage, Menu, session } from 'electron';
+import { clipboard, Menu } from 'electron';
 import { isURL, prefixHttp } from '~/utils';
 import { saveAs, viewSource, printPage } from './common-actions';
 
@@ -12,6 +14,18 @@ export const getViewMenu = (
 
   if (params.linkURL !== '') {
     menuItems = menuItems.concat([
+      {
+        label: 'Open link in new tab',
+        click: () => {
+          appWindow.viewManager.create(
+            {
+              url: params.linkURL,
+              active: true,
+            },
+            true,
+          );
+        },
+      },
       {
         label: 'Open link in new tab',
         click: () => {
@@ -40,6 +54,26 @@ export const getViewMenu = (
     ]);
   }
 
+  if (params.mediaFlags.canShowPictureInPicture) {
+    menuItems = menuItems.concat([
+      {
+        type: 'checkbox',
+        label: 'Picture in Picture',
+        checked: params.mediaFlags.isShowingPictureInPicture,
+        click: () => {
+          webContents.executeJavaScript(
+            params.mediaFlags.isShowingPictureInPicture
+              ? `document.exitPictureInPicture()`
+              : `document.elementFromPoint(${params.x}, ${params.y}).requestPictureInPicture()`,
+          );
+        },
+      },
+      {
+        type: 'separator',
+      },
+    ]);
+  }
+
   if (params.hasImageContents) {
     menuItems = menuItems.concat([
       {
@@ -48,7 +82,7 @@ export const getViewMenu = (
           appWindow.viewManager.create(
             {
               url: params.srcURL,
-              active: false,
+              active: true,
             },
             true,
           );
@@ -56,12 +90,7 @@ export const getViewMenu = (
       },
       {
         label: 'Copy image',
-        click: () => {
-          const img = nativeImage.createFromDataURL(params.srcURL);
-
-          clipboard.clear();
-          clipboard.writeImage(img);
-        },
+        click: () => webContents.copyImageAt(params.x, params.y),
       },
       {
         label: 'Copy image address',
@@ -74,6 +103,26 @@ export const getViewMenu = (
         label: 'Save image as...',
         click: () => {
           appWindow.webContents.downloadURL(params.srcURL);
+        },
+      },
+      {
+        type: 'separator',
+      },
+    ]);
+  }
+
+  if (params.mediaFlags.canShowPictureInPicture) {
+    menuItems = menuItems.concat([
+      {
+        type: 'checkbox',
+        label: 'Picture in Picture',
+        checked: params.mediaFlags.isShowingPictureInPicture,
+        click: () => {
+          webContents.executeJavaScript(
+            params.mediaFlags.isShowingPictureInPicture
+              ? `document.exitPictureInPicture()`
+              : `document.elementFromPoint(${params.x}, ${params.y}).requestPictureInPicture()`,
+          );
         },
       },
       {
@@ -190,13 +239,27 @@ export const getViewMenu = (
         },
       },
       {
+        label: 'Zoom',
+        submenu: [
+          { role: 'resetZoom', label: 'Reset' },
+          {
+            label: 'Zoom In',
+            role: 'zoomIn'
+          },
+          {
+            label: 'Zoom Out',
+            role: 'zoomOut'
+          },
+        ]
+      },
+      {
         type: 'separator',
       },
       {
         label: 'Save as...',
         accelerator: 'CmdOrCtrl+S',
         click: async () => {
-          saveAs();
+          await saveAs();
         },
       },
       {
@@ -212,15 +275,15 @@ export const getViewMenu = (
       {
         label: 'View page source',
         accelerator: 'CmdOrCtrl+U',
-        click: () => {
-          viewSource();
+        click: async () => {
+          await viewSource();
         },
       },
     ]);
   }
 
   menuItems.push({
-    label: 'Inspect',
+    label: 'Inspect Element',
     accelerator: 'CmdOrCtrl+Shift+I',
     click: () => {
       webContents.inspectElement(params.x, params.y);

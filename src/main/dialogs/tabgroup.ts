@@ -1,31 +1,26 @@
-import { AppWindow } from '../windows';
-import { TOOLBAR_HEIGHT } from '~/constants/design';
-import { Dialog } from '.';
+/* Copyright (c) 2021-2022 SnailDOS */
 
-const WIDTH = 250;
-const HEIGHT = 150;
+import { BrowserWindow } from 'electron';
+import { Application } from '../application';
+import { DIALOG_MARGIN_TOP, DIALOG_MARGIN } from '~/constants/design';
 
-export class TabGroupDialog extends Dialog {
-  public visible = false;
+export const showTabGroupDialog = async (
+  browserWindow: BrowserWindow,
+  tabGroup: any,
+) => {
+  const dialog = Application.instance.dialogs.show({
+    name: 'tabgroup',
+    browserWindow,
+    getBounds: () => ({
+      width: 266,
+      height: 180,
+      x: tabGroup.x - DIALOG_MARGIN,
+      y: tabGroup.y - DIALOG_MARGIN_TOP,
+    }),
+    onWindowBoundsUpdate: async () => (await dialog).hide(),
+  });
 
-  constructor(appWindow: AppWindow) {
-    super(appWindow, {
-      name: 'tabgroup',
-      bounds: {
-        width: WIDTH,
-        height: HEIGHT,
-        y: TOOLBAR_HEIGHT - 3,
-      },
-    });
-  }
+  if (!dialog) return;
 
-  public rearrange() {
-    super.rearrange({ x: this.bounds.x - 20 });
-  }
-
-  public edit(tabGroup: any) {
-    this.bounds.x = Math.round(tabGroup.x);
-    super.show();
-    this.webContents.send('visible', true, tabGroup);
-  }
-}
+  (await dialog).handle('tabgroup', () => tabGroup);
+};

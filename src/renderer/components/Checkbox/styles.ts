@@ -1,6 +1,9 @@
+/* Copyright (c) 2021-2022 SnailDOS */
+
 import styled, { css } from 'styled-components';
 
-import { icons, EASING_FUNCTION, GREEN_500 } from '~/renderer/constants';
+import { EASING_FUNCTION, BLUE_500 } from '~/renderer/constants';
+import { ICON_CHECK } from '~/renderer/constants/icons';
 import { centerIcon, centerBoth } from '~/renderer/mixins';
 
 export const Container = styled.div`
@@ -28,11 +31,11 @@ export const StyledCheckbox = styled.div`
   transition: 0.15s background-color, 0.15s border-color;
 
   ${({ toggled }: { toggled: boolean }) => css`
-    background-color: ${toggled ? GREEN_500 : 'transparent'};
-    border-color: ${toggled ? GREEN_500 : 'rgba(0, 0, 0, 0.54)'};
+    background-color: ${toggled ? BLUE_500 : 'transparent'};
+    border-color: ${toggled ? BLUE_500 : 'rgba(0, 0, 0, 0.54)'};
 
     &::before {
-      background-color: ${toggled ? GREEN_500 : '#000'};
+      background-color: ${toggled ? BLUE_500 : '#000'};
     }
   `}
 
@@ -57,7 +60,7 @@ export const Icon = styled.div`
   position: absolute;
   top: 0;
   left: 0;
-  background-image: url(${icons.check});
+  background-image: url(${ICON_CHECK});
   transition: 0.3s clip-path ${EASING_FUNCTION};
   -webkit-font-smoothing: antialiased;
   filter: invert(100%);

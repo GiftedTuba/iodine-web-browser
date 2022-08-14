@@ -1,3 +1,5 @@
+/* Copyright (c) 2021-2022 SnailDOS */
+
 import styled, { css } from 'styled-components';
 
 import { centerIcon } from '~/renderer/mixins';
@@ -12,12 +14,16 @@ export const StyledNavigationDrawerItem = styled.div`
   align-items: center;
   position: relative;
   cursor: pointer;
+  transition: 0.2s background-color;
 
   ${({ theme, selected }: { theme?: ITheme; selected?: boolean }) => css`
+    background-color: ${(selected ? 'rgba(0, 0, 0, 0.084)' : 'auto')};
+  
     &:hover {
-      background-color: ${theme['pages.lightForeground']
+      background-color: ${!selected ? (theme['pages.lightForeground']
         ? 'rgba(255, 255, 255, 0.06)'
-        : 'rgba(0, 0, 0, 0.04)'};
+        : 'rgba(0, 0, 0, 0.04)') : 'auto'
+      };
     }
 
     &:before {

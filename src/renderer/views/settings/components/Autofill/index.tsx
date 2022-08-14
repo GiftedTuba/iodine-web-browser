@@ -1,3 +1,5 @@
+/* Copyright (c) 2021-2022 SnailDOS */
+
 import * as React from 'react';
 import { observer } from 'mobx-react-lite';
 
@@ -6,7 +8,6 @@ import {
   ContextMenu,
   ContextMenuItem,
 } from '~/renderer/components/ContextMenu';
-import { icons } from '~/renderer/constants';
 import { Passwords } from './Passwords';
 import { Addresses } from './Addresses';
 import { Header } from '../App/style';
@@ -20,7 +21,7 @@ const onRemoveClick = () => {
   store.autoFill.removeItem(item);
 };
 
-const onMouseDown = (e: React.MouseEvent) => {
+const onMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
   e.stopPropagation();
 };
 
@@ -40,13 +41,9 @@ const Menu = observer(() => {
       visible={store.autoFill.menuVisible}
     >
       {item && item.type === 'address' && (
-        <ContextMenuItem icon={icons.edit} onClick={onEditClick}>
-          Edit
-        </ContextMenuItem>
+        <ContextMenuItem onClick={onEditClick}>Edit</ContextMenuItem>
       )}
-      <ContextMenuItem icon={icons.trash} onClick={onRemoveClick}>
-        Remove
-      </ContextMenuItem>
+    <ContextMenuItem onClick={onRemoveClick}>Remove</ContextMenuItem>
     </ContextMenu>
   );
 });

@@ -1,11 +1,13 @@
+/* Copyright (c) 2021-2022 SnailDOS */
+
 import styled, { css } from 'styled-components';
 
 import { centerIcon, shadows } from '~/renderer/mixins';
-import { icons } from '~/renderer/constants';
 import { ItemBase } from '../TopSites/style';
-import { ITheme } from '~/interfaces';
 
-export const Item = styled(ItemBase)`
+export const Item = styled(ItemBase)<{
+  backgroundColor: string;
+}>`
   transition: 0.2s box-shadow, 0.2s background-color;
   cursor: pointer;
   display: flex;
@@ -17,60 +19,56 @@ export const Item = styled(ItemBase)`
   position: relative;
   z-index: 1;
 
-  ${({ theme }: { theme?: ITheme }) => css`
-    background-color: ${theme['pages.lightForeground']
-      ? 'rgba(0, 0, 0, 0.3)'
-      : 'rgba(255, 255, 255, 0.4)'};
-
+  ${({ backgroundColor }) => css`
+    background-color: ${backgroundColor};
+    animation: all 5s infinite;
     &:hover {
+      top: -2.5px;
       box-shadow: ${shadows(8)};
-      background-color: ${theme['pages.lightForeground']
-        ? 'rgba(0, 0, 0, 0.4)'
-        : 'rgba(255, 255, 255, 0.5)'};
+      background-color: ${backgroundColor};
     }
   `};
 `;
 
 export const AddItem = styled(Item)`
   ${centerIcon(36)};
-  background-image: url(${icons.add});
 `;
 
-export const Icon = styled.div`
+interface IconProps {
+  add?: boolean;
+  icon?: string;
+  custom?: boolean;
+}
+
+export const Icon = styled.div<IconProps>`
   ${centerIcon()};
   position: relative;
-
-  &:before {
-    content: '';
-    position: absolute;
-    left: -6px;
-    top: -6px;
-    right: -6px;
-    bottom: -6px;
-    opacity: 0.3;
-    background-color: white;
-    z-index: -1;
-    border-radius: 50%;
-  }
 
   ${({
     add,
     icon,
-    custom,
-    theme,
-  }: {
-    add?: boolean;
-    icon?: string;
-    custom?: boolean;
-    theme?: ITheme;
+    custom
   }) => css`
     height: ${add ? 32 : 24}px;
     width: ${add ? 32 : 24}px;
-    background-image: url(${add ? icons.add : icon});
+    background-image: url(${icon});
     opacity: ${add || custom ? 0.54 : 1};
-    filter: ${custom && theme['pages.lightForeground']
-      ? 'invert(100%)'
-      : 'none'};
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    &:before {
+      content: '';
+      position: absolute;
+      left: -6px;
+      top: -6px;
+      right: -6px;
+      bottom: -6px;
+      opacity: 0.3;
+      background-color: ${add ? 'transparent' : 'white'};
+      z-index: -1;
+      border-radius: 50%;
+    }
 
     &:before {
       left: ${add ? -4 : -6}px;

@@ -1,4 +1,8 @@
-import { observable } from 'mobx';
+/* Copyright (c) 2021-2022 SnailDOS */
+
+import { observable, computed, makeObservable } from 'mobx';
+import { EXTENSIONS_PROTOCOL } from '~/constants';
+import { format } from 'url';
 
 interface Options {
   icon: string;
@@ -8,33 +12,62 @@ interface Options {
 }
 
 export class IBrowserAction {
-  @observable
-  public icon?: string;
+  // Observable
+  public icon?: string = '';
 
-  @observable
-  public popup?: string;
+  public _popup?: string = '';
 
-  @observable
-  public title?: string;
+  public title?: string = '';
 
-  @observable
   public badgeBackgroundColor?: string = 'gray';
 
-  @observable
   public badgeTextColor?: string = 'white';
 
-  @observable
   public badgeText?: string = '';
+
+  // Computed
+  public get popup() {
+    return this._popup;
+  }
+  // ---
+
+  public set popup(url: string) {
+    if (!url) {
+      this._popup = null;
+    } else if (url.startsWith(EXTENSIONS_PROTOCOL)) {
+      this._popup = url;
+    } else {
+      this._popup = String(
+        Object.assign(new URL('http://snaildos.com'), {
+          protocol: EXTENSIONS_PROTOCOL,
+          hostname: this.extensionId,
+          pathname: url,
+        }),
+      );
+    }
+  }
 
   public tabId?: number;
 
   public extensionId?: string;
 
+  public wasOpened = false;
+
   public constructor(options: Options) {
+    makeObservable(this, {
+      icon: observable,
+      _popup: observable,
+      title: observable,
+      badgeBackgroundColor: observable,
+      badgeText: observable,
+      badgeTextColor: observable,
+      popup: computed,
+    });
+
     const { icon, title, extensionId, popup } = options;
     this.icon = icon;
     this.title = title;
-    this.popup = popup;
     this.extensionId = extensionId;
+    this.popup = popup;
   }
 }

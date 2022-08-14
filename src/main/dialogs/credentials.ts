@@ -1,4 +1,6 @@
-import { TOOLBAR_HEIGHT } from '~/constants/design';
+/* Copyright (c) 2021-2022 SnailDOS */
+
+import { VIEW_Y_OFFSET } from '~/constants/design';
 import { AppWindow } from '../windows';
 import { Dialog } from '.';
 
@@ -12,13 +14,13 @@ export class CredentialsDialog extends Dialog {
       bounds: {
         height: HEIGHT,
         width: WIDTH,
-        y: TOOLBAR_HEIGHT,
+        y: VIEW_Y_OFFSET,
       },
     });
   }
 
   public rearrange() {
-    const { width } = this.appWindow.getContentBounds();
+    const { width } = this.appWindow.win.getContentBounds();
     super.rearrange({
       x: width - WIDTH,
     });
