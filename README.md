@@ -1,16 +1,7 @@
 <div align="center">
-  <a href="https://astian.org/midori-browser/"><img src="static/icons/icon.png" width="256"></a>
-</div>
+  <h1>Iodine Browser</h1> 
 
-<div align="center">
-  <h1>Midori Browser</h1> 
-
-[![Actions Status](https://img.shields.io/badge/GitLab-Midori--Browser-brightgreen?style=flat&logo=gitlab)](https://gitlab.com/midori-web/)
-[![PayPal](https://img.shields.io/badge/PayPal-Donate-brightgreen?style=flat&logo=PayPal)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=UQPXCVUG2CKNG&source=url)
-[![Telegram](https://img.shields.io/badge/Telegram-EN-brightgreen?style=flat&logo=telegram)](https://t.me/midoriweb)
-[![Telegram](https://img.shields.io/badge/Telegram-ES-brightgreen?style=flat&logo=telegram)](https://t.me/midoriwebes)
-
-Midori is a lightweight yet powerful web browser which runs just as well on little embedded computers named for delicious pastries as it does on beefy machines with a core temperature exceeding that of planet earth. And it looks good doing that, built on top of <code>Electron</code> and <code>React</code>. It aims to be fast, private, beautiful, extensible and functional.
+Iodine is a cool, modern web browser of the future that runs just as well on little embedded computers named for delicious pastries as it does on beefy machines with a core temperature exceeding that of planet earth. And it looks good doing that, built on top of <code>Electron</code> and <code>React</code>. It aims to be fast, private, beautiful, extensible and functional.
 </div>
 
 # Features
