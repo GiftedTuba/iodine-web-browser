@@ -1,8 +1,8 @@
 {
-  "name": "midori-ng",
-  "version": "10.0.2",
+  "name": "iodine-web-browser",
+  "version": "0.1",
   "sideEffects": false,
-  "description": "Midori a lightweight, fast and free web browser for Windows, Linux MacOS and Android.",
+  "description": "Iodine is a super-cool, feature rich web browser of the future.",
   "keywords": [
     "web-browser",
     "material",
@@ -11,15 +11,15 @@
     "mobx",
     "styled-components"
   ],
-  "homepage": "https://gitlab.com/midori-web/midori-desktop/",
+  "homepage": "https://github.com/matthewmyles/midori-desktop/",
   "main": "build/main.bundle.js",
   "author": "Astian, Inc <contact@astian.org>",
   "repository": {
     "type": "git",
-    "url": "https://gitlab.com/midori-web/midori-desktop.git"
+    "url": "https://gitlab.com/midori-web/iodine-web-browser.git"
   },
   "bugs": {
-    "url": "https://gitlab.com/midori-web/midori-desktop/-/issues"
+    "url": "https://github.com/mztthewmyles/iodine-web-browser/-/issues"
   },
   "scripts": {
     "dev-renderer": "cross-env DEV=1 webpack serve --config webpack.config.renderer.js",
