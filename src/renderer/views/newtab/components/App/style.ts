@@ -74,9 +74,16 @@ export const StyledForecast = styled.h2`
 
 export const StyledTime = styled.div`
   h1 {
-    font-size: 2.5rem;
+    font-size: 1.5rem;
     margin: 0;
     font-weight: 900;
+  }
+`;
+
+export const StyledHeader = styled.div`
+  h1 {
+    font-size: 3rem;
+    margin: 0;
   }
 `;
 
@@ -84,6 +91,15 @@ export const RightBar = styled.div`
   position: absolute;
   display: flex;
   right: 32px;
+  flex-flow: column;
+  height: 100%;
+  padding-top: 32px;
+`;
+
+export const LeftBar = styled.div`
+  position: absolute;
+  display: flex;
+  left: 32px;
   flex-flow: column;
   height: 100%;
   padding-top: 32px;
