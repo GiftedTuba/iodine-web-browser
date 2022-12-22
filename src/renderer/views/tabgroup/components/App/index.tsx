@@ -25,6 +25,7 @@ import {
   AMBER_500,
   ORANGE_500,
   DEEP_ORANGE_500,
+  LAVENDER_500
 } from '~/renderer/constants';
 import { UIStyle } from '~/renderer/mixins/default-styles';
 
@@ -73,6 +74,7 @@ export const App = observer(() => {
             AMBER_500,
             ORANGE_500,
             DEEP_ORANGE_500,
+            LAVENDER_500,
           ].map((color, key) => (
             <Color
               color={color}
