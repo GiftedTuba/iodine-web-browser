@@ -5,7 +5,7 @@ import { observer } from 'mobx-react-lite';
 
 import store from '../../store';
 import { ThemeProvider } from 'styled-components';
-import { Wrapper, Content, IconItem, Menu, Image, RightBar, StyledForecast, StyledTime } from './style';
+import { Wrapper, Content, IconItem, Menu, Image, RightBar, StyledForecast, StyledTime, LeftBar } from './style';
 import { TopSites } from '../TopSites';
 import { News } from '../News';
 import { Preferences } from '../Preferences';
@@ -20,6 +20,7 @@ import { WebUIStyle } from '~/renderer/mixins/default-styles';
 import { useQuery } from 'react-query';
 import { QueryClientProvider, QueryClient } from 'react-query';
 import { getWebUIURL } from '~/common/webui';
+import { LeftContent } from '~/renderer/components/Pages';
 
 const queryClient = new QueryClient();
 
@@ -45,6 +46,14 @@ const onRefreshClick = () => {
     localStorage.setItem('imageDate', '');
     store.loadImage();
   }, 50);
+};
+
+const Header = () => {
+  return (
+    <div>
+      <h1>Iodine Browser</h1>
+    </div>
+  );
 };
 
 const Time = () => {
@@ -99,19 +108,21 @@ export default observer(() => {
 
           <Image src={store.imageVisible ? store.image : ''}></Image>
           <Content>
-          <Time />
+          <Header />
           <Forecast />
           {store.topSitesVisible && <TopSites></TopSites>}
           </Content>
-
+          <LeftBar>
+            <Time />
+          </LeftBar>
           <RightBar>
-            <IconItem
-              imageSet={store.imageVisible}
-              title="Configure landing page"
-              icon={ICON_TUNE}
-              onMouseDown={(e) => e.stopPropagation()}
-              onClick={onTuneClick}
-            ></IconItem>
+          <IconItem
+            imageSet={store.imageVisible}
+            title="Configure landing page"
+            icon={ICON_TUNE}
+            onMouseDown={(e) => e.stopPropagation()}
+            onClick={onTuneClick}
+          ></IconItem>
           </RightBar>
           {store.quickMenuVisible && (
             <Menu>
@@ -138,6 +149,13 @@ export default observer(() => {
                 title="Extensions"
                 icon={ICON_EXTENSIONS}
                 onClick={onExtensionClick}
+              ></IconItem>
+              <IconItem
+              imageSet={store.imageVisible}
+              title="Configure landing page"
+              icon={ICON_TUNE}
+              onMouseDown={(e) => e.stopPropagation()}
+              onClick={onTuneClick}
               ></IconItem>
               {/*
               <IconItem
