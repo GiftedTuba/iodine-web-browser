@@ -20,6 +20,7 @@ import {
   YELLOW_500,
   AMBER_500,
   ORANGE_500,
+  LAVENDER_500,
   DEEP_ORANGE_500,
   BLUE_GRAY_500,
 } from '~/renderer/constants';
@@ -44,6 +45,7 @@ export class TabGroupsStore {
     YELLOW_500,
     AMBER_500,
     ORANGE_500,
+    LAVENDER_500,
     DEEP_ORANGE_500,
     BLUE_GRAY_500,
   ];
