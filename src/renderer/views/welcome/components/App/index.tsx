@@ -107,8 +107,8 @@ export default observer(() => {
 
 
       <StyledSection className="banner1">
-        <Description>Welcome to Midori Next</Description>
-        <Title>Lets get started!</Title>
+        <Description>Welcome to Iodine</Description>
+        <Title>Start!</Title>
         <Button theme={store.theme} onClick={nextPage}>Start!</Button>
       </StyledSection>
 
@@ -165,7 +165,7 @@ export default observer(() => {
 
        <StyledSection className="banner3">
         <Favicon></Favicon>
-        <Title>Midori Setup</Title>
+        <Title>Iodine Setup</Title>
         <Description style={{fontSize: "1.5rem", fontWeight: 500, margin: 0, marginBottom: "48px", opacity: '1' }}>For maximum privacy, set Midori as your default browser!</Description>
         <div style={{ display: 'flex', width: "15%", justifyContent: "space-around" }}>
         </div>
@@ -192,8 +192,8 @@ export default observer(() => {
       </StyledSection>
 
       <StyledSection className="banner4">
-        <Description>Midori is the new privacy orientated browser!</Description>
-        <Title>Inbuilt adblocker and more, lets start.</Title>
+        <Description>Iodine is an incredible browser!</Description>
+        <Title>Built-in adblocker and more.</Title>
         <Button theme={store.theme} onClick={commit}>Lets get started!</Button>
       </StyledSection>
     </ThemeProvider>
