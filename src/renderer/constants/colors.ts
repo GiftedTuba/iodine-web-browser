@@ -31,6 +31,8 @@ export const AMBER_500 = '#FFC107';
 
 export const ORANGE_500 = '#FF9800';
 
+export const LAVENDER_500 = '#DED4E8';
+
 export const DEEP_ORANGE_500 = '#FF5722';
 
 export const BLUE_GRAY_500 = '#607D8B';
