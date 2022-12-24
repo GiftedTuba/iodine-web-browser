@@ -23,6 +23,20 @@ import {
   LAVENDER_500,
   DEEP_ORANGE_500,
   BLUE_GRAY_500,
+  PEACH_500,
+  CHARCOAL_500,
+  CORAL_500,
+  CHERRY_500,
+  BABY_BLUE_500,
+  HOT_PINK_500,
+  SKY_BLUE_500,
+  SAGE_500,
+  APPLE_500,
+  FOREST_GREEN_500,
+  ISLAND_GREEN_500,
+  BEIGE_500,
+  TAN_500,
+  MAROON_500,
 } from '~/renderer/constants';
 import { ipcRenderer } from 'electron';
 
@@ -48,6 +62,20 @@ export class TabGroupsStore {
     LAVENDER_500,
     DEEP_ORANGE_500,
     BLUE_GRAY_500,
+    PEACH_500,
+    CHARCOAL_500,
+    CORAL_500,
+    CHERRY_500,
+    BABY_BLUE_500,
+    HOT_PINK_500,
+    SKY_BLUE_500,
+    SAGE_500,
+    APPLE_500,
+    FOREST_GREEN_500,
+    ISLAND_GREEN_500,
+    BEIGE_500,
+    TAN_500,
+    MAROON_500,
   ];
 
   private store: Store;
