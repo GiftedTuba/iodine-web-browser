@@ -36,3 +36,31 @@ export const LAVENDER_500 = '#DED4E8';
 export const DEEP_ORANGE_500 = '#FF5722';
 
 export const BLUE_GRAY_500 = '#607D8B';
+
+export const PEACH_500 = '#EEA47FFF';
+
+export const CHARCOAL_500 = '#101820FF';
+
+export const CORAL_500 = '#F96167';
+
+export const CHERRY_500 = '#990011FF';
+
+export const BABY_BLUE_500 = '#8AAAE5';
+
+export const HOT_PINK_500 = '#FF69B4';
+
+export const SKY_BLUE_500 = '#89ABE3FF';
+
+export const SAGE_500 = '#CBD18F';
+
+export const APPLE_500 = '#783937FF';
+
+export const FOREST_GREEN_500 = '#2C5F2D';
+
+export const ISLAND_GREEN_500 = '#2BAE66FF';
+
+export const BEIGE_500 = '#DDC3A5';
+
+export const TAN_500 = '#E0A96D';
+
+export const MAROON_500 = '#7A2048';
