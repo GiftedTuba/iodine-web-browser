@@ -3,6 +3,9 @@
 import { ITheme } from '~/interfaces';
 import { BLUE_500 } from './colors';
 
+/* Basically, this file defines all the themes, storing their values into variables, usually named by the color of their theme.
+You can add whatever number of themes you want, just follow the structure of all the other themes. This theme will then be included in several other files. */
+
 export const lightTheme: ITheme = {
   'titlebar.backgroundColor': '#d4d4d4',
   'addressbar.backgroundColor': '#fff',
@@ -71,70 +74,70 @@ export const darkTheme: ITheme = {
   accentColor: BLUE_500,
 };
 
-export const blueTheme: ITheme = {
-  'titlebar.backgroundColor': '#FFAc00',
-  'addressbar.backgroundColor': '#FFAc00',
-  'addressbar.textColor': '#453EAB',
-  'toolbar.backgroundColor': '#453EAB',
-  'toolbar.bottomLine.backgroundColor': 'rgba(255, 255, 255, 0.08)',
+export const blue_and_orange_theme: ITheme = {
+  'titlebar.backgroundColor': '#FFAc00', /* Orange */
+  'addressbar.backgroundColor': '#FFAc00', /* Orange */
+  'addressbar.textColor': '#002aff', /* Blue */
+  'toolbar.backgroundColor': '#002aff', /* Blue */
+  'toolbar.bottomLine.backgroundColor': '#002aff', /* Blue */
   'toolbar.lightForeground': true,
-  'toolbar.separator.color': 'rgba(255, 255, 255, 0.12)',
-  'tab.selected.textColor': '#FFAC00',
-  'tab.textColor': '#453EAB',
-  'control.backgroundColor': '#FFAC00',
-  'control.hover.backgroundColor': '#FFAc00',
-  'control.valueColor': '#453EAB',
+  'toolbar.separator.color': '#002aff', /* Blue */
+  'tab.selected.textColor': '#FFAC00', /* Orange */
+  'tab.textColor': '#002aff', /* Blue */
+  'control.backgroundColor': '#FFAC00', /* Orange */
+  'control.hover.backgroundColor': '#FFAc00', /* Orange */
+  'control.valueColor': '#002aff', /* Blue */
   'control.lightIcon': true,
-  'switch.backgroundColor': '#FFAc00',
-  'dialog.backgroundColor': 'rgba(69, 62, 171)',
-  'dialog.separator.color': 'rgba(255, 255, 255, 0.12)',
-  'dialog.textColor': '#FFAc00',
+  'switch.backgroundColor': '#FFAc00', /* Orange */
+  'dialog.backgroundColor': '#002aff', /* Blue */
+  'dialog.separator.color': '#002aff', /* Blue */
+  'dialog.textColor': '#FFAc00', /* Orange */
   'dialog.lightForeground': true,
-  'searchBox.backgroundColor': '#453EAB',
+  'searchBox.backgroundColor': '#002aff', /* Blue */
   'searchBox.lightForeground': true,
-  'pages.backgroundColor': '#453EAB',
+  'pages.backgroundColor': '#002aff', /* Blue */
   'pages.lightForeground': true,
-  'pages.textColor': 'FFAC00',
-  'dropdown.backgroundColor': 'rgb(66, 66, 66)',
-  'dropdown.backgroundColor.translucent': 'rgb(60, 60, 60, 0.6)',
-  'dropdown.separator.color': 'rgba(255, 255, 255, 0.12)',
-  'pages.navigationDrawer1.backgroundColor': 'rgba(69, 62, 171)',
-  'pages.navigationDrawer2.backgroundColor': 'rgba(69, 62, 171, 0.05)',
+  'pages.textColor': 'FFAC00', /* Orange */
+  'dropdown.backgroundColor': '#002aff', /* Blue */
+  'dropdown.backgroundColor.translucent': '#002aff', /* Blue */
+  'dropdown.separator.color': '#002aff', /* Blue */
+  'pages.navigationDrawer1.backgroundColor': '#002aff', /* Blue */
+  'pages.navigationDrawer2.backgroundColor': '#002aff', /* Blue */
 
-  backgroundColor: '#1c1c1c',
+  backgroundColor: '#FFAC00', /* Orange */
   accentColor: BLUE_500,
 };
 
-export const lavTheme: ITheme = {
-  'titlebar.backgroundColor': '#c785d4',
-  'addressbar.backgroundColor': '#ad9eb5',
-  'addressbar.textColor': '#ffffff',
-  'toolbar.backgroundColor': '#9b31b0',
-  'toolbar.bottomLine.backgroundColor': '#5d076e',
-  'toolbar.lightForeground': true,
-  'toolbar.separator.color': '#000000',
-  'tab.selected.textColor': '#020003',
-  'tab.textColor': '#000000',
-  'control.backgroundColor': '#853ea8',
-  'control.hover.backgroundColor': '#b58fc7',
-  'control.valueColor': '#fff',
+export const purple_and_yellow_theme: ITheme = {
+  'titlebar.backgroundColor': '#faff00', /* Yellow */
+  'addressbar.backgroundColor': '#faff00', /* Yellow */
+  'addressbar.textColor': '#7800ff', /* Purple */
+  'toolbar.backgroundColor': '#7800ff', /* Purple */
+  'toolbar.bottomLine.backgroundColor': '#7800ff', /* Purple */
+  'toolbar.lightForeground': false,
+  'toolbar.separator.color': '#7800ff', /* Purple */
+  'tab.selected.textColor': '#faff00', /* Yellow */
+  'tab.textColor': '#7800ff', /* Purple */
+  'control.backgroundColor': '#faff00', /* Yellow */
+  'control.hover.backgroundColor': '#faff00', /* Yellow */
+  'control.valueColor': '#7800ff', /* Purple */
   'control.lightIcon': true,
-  'switch.backgroundColor': '#560566',
-  'dialog.backgroundColor': '#560566',
-  'dialog.separator.color': 'rgba(255, 255, 255, 0.12)',
-  'dialog.textColor': '#e0e0e0',
+  'switch.backgroundColor': '#7800ff', /* Purple */
+  'dialog.backgroundColor': '#7800ff', /* Purple */
+  'dialog.separator.color': '#7800ff', /* Purple */
+  'dialog.textColor': '#faff00', /* Yellow */
   'dialog.lightForeground': true,
-  'searchBox.backgroundColor': '#c700bf',
-  'searchBox.lightForeground': true,
-  'pages.backgroundColor': '#4e0d6e',
-  'pages.lightForeground': true,
-  'pages.textColor': '#ffffff',
-  'dropdown.backgroundColor': 'rgb(66, 66, 66)',
-  'dropdown.backgroundColor.translucent': 'rgb(60, 60, 60, 0.6)',
-  'dropdown.separator.color': 'rgba(255, 255, 255, 0.12)',
-  'pages.navigationDrawer1.backgroundColor': 'rgba(69, 62, 171)',
-  'pages.navigationDrawer2.backgroundColor': 'rgba(69, 62, 171, 0.05)',
+  'searchBox.backgroundColor': '#7800ff', /* Purple */
+  'searchBox.lightForeground': false,
+  'pages.backgroundColor': '#7800ff', /* Purple */
+  'pages.lightForeground': false,
+  'pages.textColor': '#faff00', /* Yellow */
+  'dropdown.backgroundColor': '#7800ff', /* Purple */
+  'dropdown.backgroundColor.translucent': '#7800ff', /* Purple */
+  'dropdown.separator.color': '#7800ff', /* Purple */
+  'pages.navigationDrawer1.backgroundColor': '#7800ff', /* Purple */
+  'pages.navigationDrawer2.backgroundColor': '#7800ff', /* Purple */
 
-  backgroundColor: '#1c1c1c',
+  backgroundColor: '#faff00', /* Yellow */
   accentColor: BLUE_500,
 };
