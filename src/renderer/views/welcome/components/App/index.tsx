@@ -131,13 +131,13 @@ export default observer(() => {
           <Option onClick={() => themeset("Blue")} className="Blue">
             <div style={{ border: "1px solid #0000FF", backgroundColor: "#0026ff", borderRadius: "50%", display: "flex", height: "3rem", marginBottom: ".50rem", width: "3rem" }}></div>
             <div>
-              Blue and Orange
+              Blue/Orange
             </div>
           </Option>
           <Option onClick={() => themeset("Lavender")} className="Lavender">
             <div style={{ border: "1px solid rgb(95, 99, 104)", backgroundColor: "#b500fc", borderRadius: "50%", display: "flex", height: "3rem", marginBottom: ".50rem", width: "3rem" }}></div>
             <div>
-              Purple and Yellow
+              Purple/Yellow
             </div>
           </Option>
         </div>
