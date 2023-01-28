@@ -43,7 +43,7 @@
   "fileAssociations": [
     {
       "name": "Document",
-      "description": "Midori",
+      "description": "Iodine",
       "role": "Viewer",
       "ext": "html"
     }

@@ -7,7 +7,7 @@ import { URL } from 'url';
 
 protocol.registerSchemesAsPrivileged([
   {
-    scheme: 'midori',
+    scheme: 'iodine',
     privileges: {
       bypassCSP: true,
       secure: true,

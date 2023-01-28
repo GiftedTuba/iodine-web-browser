@@ -70,7 +70,7 @@ export const DefaultBrowser = observer(() => {
                 minWidth: "21px"
               }}
             ></div>
-            <HiddenDiv>Midori is not your default browser, for maximum security and privacy, we recommend you to use Midori</HiddenDiv>
+            <HiddenDiv>Iodine is not your default browser. Although it is your decison, for maximum security and privacy, we recommend you to use Iodine</HiddenDiv>
             <ButtonPredeterminado onClick={onButtonClick}>
               Set as default!
             </ButtonPredeterminado>

@@ -185,7 +185,7 @@ export default observer(() => {
        <StyledSection className="banner3">
         <Favicon></Favicon>
         <Title>Iodine Setup</Title>
-        <Description style={{fontSize: "1.5rem", fontWeight: 500, margin: 0, marginBottom: "48px", opacity: '1' }}>For maximum privacy, set Midori as your default browser!</Description>
+        <Description style={{fontSize: "1.5rem", fontWeight: 500, margin: 0, marginBottom: "48px", opacity: '1' }}>For maximum privacy, set Iodine as your default browser!</Description>
         <div style={{ display: 'flex', width: "15%", justifyContent: "space-around" }}>
         </div>
         <div style={{ width: '20%', display: 'flex', justifyContent: 'space-between', marginTop: '3rem' }}>

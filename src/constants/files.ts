@@ -4,9 +4,9 @@ import { DEFAULT_SETTINGS } from './settings';
 
 export const DIRECTORIES = ['adblock', 'extensions', 'storage'];
 
-export const WEBUI_PROTOCOL = 'midori';
+export const WEBUI_PROTOCOL = 'iodine';
 
-export const ERROR_PROTOCOL = 'midori-error';
+export const ERROR_PROTOCOL = 'iodine-error';
 
 export const NETWORK_ERROR_HOST = 'network-error';
 

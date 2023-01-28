@@ -14,6 +14,7 @@ const Location = observer(() => {
   return (
     <Row>
       <Title>
+
         Iodine is an epic, privacy orientated browser with tons of features such as a
         built in Ad Blocker. Iodine is happily made by Matthew Woodard, and special thanks to Astian Inc. For contributing to code to the base of Iodine. Of course, we also
         thanks to all our other contributers...
@@ -29,6 +30,9 @@ const Location = observer(() => {
         <Title> Mauro - Contributer</Title>
         <p></p>
         <Title>HzzaAwesome - Graphic Designer</Title>
+        <p></p>
+        <p></p>
+        <Title>Did you know that Iodine is open source? Find it here at https://github.com/matthewmyles/iodine-web-browser</Title>
         </Title>
     </Row>
   );
@@ -38,8 +42,7 @@ export const About = () => {
   return (
     <>
       <Header>About Iodine</Header>
-      <Title>Your version of Midori is 0.1.1
-        
+      <Title>Your version of Iodine is 0.1.1
       </Title>
       <Location />
     </>
