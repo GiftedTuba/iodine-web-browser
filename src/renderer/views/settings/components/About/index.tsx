@@ -1,7 +1,6 @@
 /* Copyright (c) 2021-2022 SnailDOS */
 
 import * as React from 'react';
-
 import { Switch } from '~/renderer/components/Switch';
 import { Title, Row, Control, Header, SecondaryText } from '../App/style';
 import store from '../../store';
@@ -15,13 +14,13 @@ const Location = observer(() => {
   return (
     <Row>
       <Title>
-        Midori is a privacy orientated browser with tons of features such as a
-        built in Ad Blocker. Midori is made with love by the Astian, Inc. Big
-        thanks to all our contributers...
+        Iodine is an epic, privacy orientated browser with tons of features such as a
+        built in Ad Blocker. Iodine is happily made by Matthew Woodard, and special thanks to Astian Inc. For contributing to code to the base of Iodine. Of course, we also
+        thanks to all our other contributers...
         <p></p>
-        <Title>Astian, Inc - Development and Code</Title>
+        <Title>Midori - Original Fork</Title>
         <p></p>
-        <Title>Wexond - Original Fork</Title>
+        <Title>Wexond - Original, Original Fork</Title>
         <p></p>
         <Title>Preknowledge - Contributer</Title>
         <p></p>
@@ -38,8 +37,10 @@ const Location = observer(() => {
 export const About = () => {
   return (
     <>
-      <Header>About Midori</Header>
-      <Title>Your version of Midori is v10.0.2</Title>
+      <Header>About Iodine</Header>
+      <Title>Your version of Midori is 0.1.1
+        
+      </Title>
       <Location />
     </>
   );

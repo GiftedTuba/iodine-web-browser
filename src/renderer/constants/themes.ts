@@ -141,3 +141,37 @@ export const purple_and_yellow_theme: ITheme = {
   backgroundColor: '#faff00', /* Yellow */
   accentColor: BLUE_500,
 };
+
+export const red_and_green_theme: ITheme = {
+  'titlebar.backgroundColor': '#ff0000', /* Red */
+  'addressbar.backgroundColor': '#ff0000', /* Red*/
+  'addressbar.textColor': '#008000', /* Green */
+  'toolbar.backgroundColor': '#008000', /* Green */
+  'toolbar.bottomLine.backgroundColor': '#008000', /* Green */
+  'toolbar.lightForeground': false,
+  'toolbar.separator.color': '#008000', /* Green */
+  'tab.selected.textColor': '#ff0000', /* Red */
+  'tab.textColor': '#008000', /* Green */
+  'control.backgroundColor': '#ff0000', /* Red */
+  'control.hover.backgroundColor': '#ff0000', /* Red */
+  'control.valueColor': '#008000', /* Green */
+  'control.lightIcon': true,
+  'switch.backgroundColor': '#008000', /* Green */
+  'dialog.backgroundColor': '#008000', /* Green */
+  'dialog.separator.color': '#008000', /* Green */
+  'dialog.textColor': '#ff0000', /* Red */
+  'dialog.lightForeground': true,
+  'searchBox.backgroundColor': '#008000', /* Green */
+  'searchBox.lightForeground': false,
+  'pages.backgroundColor': '#008000', /* Green */
+  'pages.lightForeground': false,
+  'pages.textColor': '#ff0000', /* Red */
+  'dropdown.backgroundColor': '#008000', /* Green */
+  'dropdown.backgroundColor.translucent': '#008000', /* Green */
+  'dropdown.separator.color': '#008000', /* Green */
+  'pages.navigationDrawer1.backgroundColor': '#008000', /* Green */
+  'pages.navigationDrawer2.backgroundColor': '#008000', /* Green */
+
+  backgroundColor: '#ff0000', /* Red */
+  accentColor: BLUE_500,
+};

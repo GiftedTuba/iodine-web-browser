@@ -26,6 +26,13 @@ export const DEFAULT_SEARCH_ENGINES = [
     icon: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAA3NCSVQICAjb4U/gAAAANlBMVEUAfX3k8/MAiop7trYAgoL6//8AdXULhIT///+exMQ4l5ew0dFLoaG929v0+/vQ5+eVwsIcjo4kKiufAAAAZElEQVQYlY2QyQ6AMAhEpy0Fuqr//7NWo108OQcSHsMSICJEMoSWR8sLQNCCD/A/AEALYFMy3+wFQdWkg0aLNaoaMM3gbQaV3eVww9HKajL60KbqmJ61QrvXBPQ7WrCRp0vXB5xZ6wZZjwmZbQAAAABJRU5ErkJggg==',
   },
   {
+    name: 'Yahoo',
+    url: 'https://www.yahoo.com/search?q=%s',
+    keywordsUrl: '',
+    keyword: 'yahoo.com',
+    icon: '',
+  },
+  {
     name: 'Ecosia',
     url: 'https://www.ecosia.org/search?q=%s',
     keywordsUrl: 'https://ac.ecosia.org/autocomplete?q=%s&type=list',
@@ -58,6 +65,13 @@ export const DEFAULT_SEARCH_ENGINES = [
     url: 'https://www.you.com/search?q=%s',
     keywordsUrl: '',
     keyword: 'you.com',
+    icon: '',
+  },
+  {
+    name: 'Swisscows',
+    url: 'https://www.swisscows.com/search?q=%s',
+    keywordsUrl: '',
+    keyword: 'swisscows.com',
     icon: '',
   },
   

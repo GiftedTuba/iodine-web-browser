@@ -101,7 +101,6 @@ const onAddClick = () => {
   store.searchEngineUrlInputRef.current.value = '';
 };
 
-{/*
 export const ManageSearchEngines = observer(() => {
   return (
     <>
@@ -130,8 +129,6 @@ export const ManageSearchEngines = observer(() => {
   );
 });
 
-*/}
-
 const onManageSearchEngines = () => {
   store.selectedSection = 'search-engines';
 };
@@ -142,10 +139,10 @@ export const AddressBar = observer(() => {
       <Header>Address bar</Header>
       <SuggestionsToggle />
       <SearchEngineRow />
-    {/*  <Row onClick={onManageSearchEngines}>
-         <Title>Manage search engines</Title>
-         <Control></Control>
-         </Row> */}
+      <Row onClick={onManageSearchEngines}>
+        <Title>Manage search engines</Title>
+        <Control></Control>
+      </Row>
     </>
   );
 });

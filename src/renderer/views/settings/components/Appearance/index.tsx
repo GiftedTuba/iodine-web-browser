@@ -35,8 +35,9 @@ const ThemeVariant = observer(() => {
           <Dropdown.Item value="auto">Auto</Dropdown.Item>
           <Dropdown.Item value="wexond-light">Light</Dropdown.Item>
           <Dropdown.Item value="wexond-dark">Dark</Dropdown.Item>
-          <Dropdown.Item value="midori-blue">Blue</Dropdown.Item>
-          <Dropdown.Item value="midori-lavender">Lavender</Dropdown.Item>
+          <Dropdown.Item value="midori-blue">Blue And Orange</Dropdown.Item>
+          <Dropdown.Item value="midori-lavender">Purple and Yellow</Dropdown.Item>
+          <Dropdown.Item value="midori-red_and_green">Green and Red</Dropdown.Item>
         </Dropdown>
       </Control>
     </Row>

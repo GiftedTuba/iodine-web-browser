@@ -47,6 +47,7 @@ const themeset = (mode: string) => {
     document.getElementsByClassName("Dark")[0].classList.remove("active")
     document.getElementsByClassName("Blue")[0].classList.remove("active")
     document.getElementsByClassName("Lavender")[0].classList.remove("active")
+    document.getElementsByClassName("Red_and_Green")[0].classList.remove("active")
     document.getElementsByClassName("Light")[0].classList.add("active")
     store.settings.theme = "wexond-light";
     store.settings.themeAuto = false;
@@ -55,6 +56,7 @@ const themeset = (mode: string) => {
     document.getElementsByClassName("Light")[0].classList.remove("active")
     document.getElementsByClassName("Blue")[0].classList.remove("active")
     document.getElementsByClassName("Lavender")[0].classList.remove("active")
+    document.getElementsByClassName("Red_and_Green")[0].classList.remove("active")
     document.getElementsByClassName("Dark")[0].classList.add("active")
     store.settings.theme = "wexond-dark";
     store.settings.themeAuto = false;
@@ -63,6 +65,7 @@ const themeset = (mode: string) => {
     document.getElementsByClassName("Light")[0].classList.remove("active")
     document.getElementsByClassName("Lavender")[0].classList.remove("active")
     document.getElementsByClassName("Dark")[0].classList.remove("active")
+    document.getElementsByClassName("Red_and_Green")[0].classList.remove("active")
     document.getElementsByClassName("Blue")[0].classList.add("active")
     store.settings.theme = "midori-blue";
     store.settings.themeAuto = false;
@@ -71,8 +74,18 @@ const themeset = (mode: string) => {
     document.getElementsByClassName("Light")[0].classList.remove("active")
     document.getElementsByClassName("Blue")[0].classList.remove("active")
     document.getElementsByClassName("Dark")[0].classList.remove("active")
+    document.getElementsByClassName("Red_and_Green")[0].classList.remove("active")
     document.getElementsByClassName("Lavender")[0].classList.add("active")
     store.settings.theme = "midori-lavender";
+    store.settings.themeAuto = false;
+    store.save();
+  } else if (theme =="Red_and_Green") {
+    document.getElementsByClassName("Light")[0].classList.remove("active")
+    document.getElementsByClassName("Blue")[0].classList.remove("active")
+    document.getElementsByClassName("Dark")[0].classList.remove("active")
+    document.getElementsByClassName("Lavender")[0].classList.remove("active")
+    document.getElementsByClassName("Red_and_Green")[0].classList.add("active")
+    store.settings.theme = "midori-red_and_green";
     store.settings.themeAuto = false;
     store.save();
   }
@@ -138,6 +151,12 @@ export default observer(() => {
             <div style={{ border: "1px solid rgb(95, 99, 104)", backgroundColor: "#b500fc", borderRadius: "50%", display: "flex", height: "3rem", marginBottom: ".50rem", width: "3rem" }}></div>
             <div>
               Purple/Yellow
+            </div>
+          </Option>
+          <Option onClick={() => themeset("Red_and_Green")} className="Green_and_Yellow">
+            <div style={{ border: "1px solid rgb(95, 99, 104)", backgroundColor: "#b500fc", borderRadius: "50%", display: "flex", height: "3rem", marginBottom: ".50rem", width: "3rem" }}></div>
+            <div>
+              Green/Red
             </div>
           </Option>
         </div>
