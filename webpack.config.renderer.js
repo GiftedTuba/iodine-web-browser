@@ -52,7 +52,7 @@ applyEntries(appConfig, [
   'menuExtra',
   'incognitoMenu',
   'welcome',
-  'changelog',
+  'whatsnew',
   'preview',
   'tabgroup',
   'downloads-dialog',

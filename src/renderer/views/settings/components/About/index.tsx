@@ -32,8 +32,8 @@ const Location = observer(() => {
         <Title>HzzaAwesome - Graphic Designer</Title>
         <p></p>
         <p></p>
-        <Title>Did you know that Iodine is open source? Find it here at https://github.com/matthewmyles/iodine-web-browser</Title>
-        </Title>
+      </Title>
+      <Title>Did you know that Iodine is open source? Find it here at https://github.com/matthewmyles/iodine-web-browser</Title>
     </Row>
   );
 });
