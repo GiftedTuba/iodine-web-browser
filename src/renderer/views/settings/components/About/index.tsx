@@ -16,7 +16,7 @@ const Location = observer(() => {
       <Title>
 
         Iodine is an epic, privacy orientated browser with tons of features such as a
-        built in Ad Blocker. Iodine is happily made by Matthew Woodard, and special thanks to Astian Inc. For contributing to code to the base of Iodine. Of course, we also
+        built in Ad Blocker. Iodine is happily made by GiftedTuba, and special thanks to Astian Inc. For contributing to code to the base of Iodine. Of course, we also
         thanks to all our other contributers...
         <p></p>
         <Title>Midori - Original Fork</Title>

@@ -1,6 +1,6 @@
 {
   "appId": "org.midoribrowser.midoring",
-  "productName": "Midori Next Generation",
+  "productName": "Iodine Browser",
   "nsis": {
     "include": "static/installer.nsh"
   },
