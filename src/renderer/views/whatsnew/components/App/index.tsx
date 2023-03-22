@@ -83,13 +83,10 @@ export default observer(() => {
         <Favicon></Favicon>
         <Description style={{fontSize: "1.5rem", fontWeight: 500, margin: 0, marginBottom: "48px", opacity: '1' }}>What has been changed?</Description>
         <Description>Introducing Iodine Bug Fix Update (v10.0.2)</Description>
-        <Description>- Bug fixing the extension button.</Description>
-        <Description>- Introducing our new permission system.</Description>
+        <Description>- New Tab Group Colors</Description>
+        <Description>- More Search Engines</Description>
         <Description>- Minor Visual Changes</Description>
-        <Description>- Rewriting Our Zoom System</Description>
-        <Description>- Patching Tab Grouping and Bookmarks</Description>
-        <Description>- Rewriting Our Download System</Description>
-        <Description>- Options to clear certain Iodine databases</Description>
+        <Description>- More themes</Description>
         <Description>And much, much more!</Description>
         <div style={{ width: '500px', display: 'flex', justifyContent: 'flex-end', marginTop: '3rem' }}>
           <ExtraStyledButton
