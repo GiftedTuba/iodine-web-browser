@@ -79,7 +79,7 @@ const copiarUrl = async () => {
 
 const shareUrl = () => {
   
-  shell.openExternal('mailto:?subject=Shared From Midori Browser&body='+store.data.url)
+  shell.openExternal('mailto:?subject=Shared From Iodine Browser&body='+store.data.url)
 }
 
 const capture = async () => {

@@ -1,6 +1,6 @@
 {
   "name": "iodine-web-browser",
-  "version": "0.1",
+  "version": "0.2",
   "sideEffects": false,
   "description": "Iodine is a super-cool, feature rich web browser of the future.",
   "keywords": [
@@ -11,12 +11,12 @@
     "mobx",
     "styled-components"
   ],
-  "homepage": "https://github.com/matthewmyles/midori-desktop/",
+  "homepage": "https://github.com/matthewmyles/Iodine-desktop/",
   "main": "build/main.bundle.js",
   "author": "Astian, Inc <contact@astian.org>",
   "repository": {
     "type": "git",
-    "url": "https://gitlab.com/midori-web/iodine-web-browser.git"
+    "url": "https://gitlab.com/Iodine-web/iodine-web-browser.git"
   },
   "bugs": {
     "url": "https://github.com/mztthewmyles/iodine-web-browser/-/issues"

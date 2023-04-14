@@ -13,9 +13,9 @@ if (process.env.NODE_ENV === 'development') {
 import { platform } from 'os';
 import { Application } from './application';
 
-export const isNightly = app.name === 'midori-nightly';
+export const isNightly = app.name === 'Iodine-nightly';
 
-app.name = isNightly ? 'Midori Nightly' : 'Midori';
+app.name = isNightly ? 'Iodine Nightly' : 'Iodine';
 
 (process.env as any)['ELECTRON_DISABLE_SECURITY_WARNINGS'] = true;
 

@@ -46,8 +46,8 @@ const themeset = (mode: string) => {
   if (theme == "Light") {
     document.getElementsByClassName("Dark")[0].classList.remove("active")
     document.getElementsByClassName("Blue")[0].classList.remove("active")
-    document.getElementsByClassName("Lavender")[0].classList.remove("active")
-    document.getElementsByClassName("Red_and_Green")[0].classList.remove("active")
+    document.getElementsByClassName("purple_and_yellow")[0].classList.remove("active")
+    document.getElementsByClassName("red_and_green")[0].classList.remove("active")
     document.getElementsByClassName("Light")[0].classList.add("active")
     store.settings.theme = "wexond-light";
     store.settings.themeAuto = false;
@@ -55,37 +55,37 @@ const themeset = (mode: string) => {
   } else if (theme =="Dark") {
     document.getElementsByClassName("Light")[0].classList.remove("active")
     document.getElementsByClassName("Blue")[0].classList.remove("active")
-    document.getElementsByClassName("Lavender")[0].classList.remove("active")
-    document.getElementsByClassName("Red_and_Green")[0].classList.remove("active")
+    document.getElementsByClassName("purple_and_yellow")[0].classList.remove("active")
+    document.getElementsByClassName("red_and_green")[0].classList.remove("active")
     document.getElementsByClassName("Dark")[0].classList.add("active")
     store.settings.theme = "wexond-dark";
     store.settings.themeAuto = false;
     store.save();
   } else if (theme =="Blue") {
     document.getElementsByClassName("Light")[0].classList.remove("active")
-    document.getElementsByClassName("Lavender")[0].classList.remove("active")
+    document.getElementsByClassName("purple_and_yellow")[0].classList.remove("active")
     document.getElementsByClassName("Dark")[0].classList.remove("active")
-    document.getElementsByClassName("Red_and_Green")[0].classList.remove("active")
+    document.getElementsByClassName("red_and_green")[0].classList.remove("active")
     document.getElementsByClassName("Blue")[0].classList.add("active")
-    store.settings.theme = "midori-blue";
+    store.settings.theme = "Iodine-blue";
     store.settings.themeAuto = false;
     store.save();
-  } else if (theme =="Lavender") {
+  } else if (theme =="purple_and_yellow") {
     document.getElementsByClassName("Light")[0].classList.remove("active")
     document.getElementsByClassName("Blue")[0].classList.remove("active")
     document.getElementsByClassName("Dark")[0].classList.remove("active")
-    document.getElementsByClassName("Red_and_Green")[0].classList.remove("active")
-    document.getElementsByClassName("Lavender")[0].classList.add("active")
-    store.settings.theme = "midori-lavender";
+    document.getElementsByClassName("red_and_green")[0].classList.remove("active")
+    document.getElementsByClassName("purple_and_yellow")[0].classList.add("active")
+    store.settings.theme = "Iodine-purple_and_yellow";
     store.settings.themeAuto = false;
     store.save();
-  } else if (theme =="Red_and_Green") {
+  } else if (theme =="red_and_green") {
     document.getElementsByClassName("Light")[0].classList.remove("active")
     document.getElementsByClassName("Blue")[0].classList.remove("active")
     document.getElementsByClassName("Dark")[0].classList.remove("active")
-    document.getElementsByClassName("Lavender")[0].classList.remove("active")
-    document.getElementsByClassName("Red_and_Green")[0].classList.add("active")
-    store.settings.theme = "midori-red_and_green";
+    document.getElementsByClassName("purple_and_yellow")[0].classList.remove("active")
+    document.getElementsByClassName("red_and_green")[0].classList.add("active")
+    store.settings.theme = "Iodine-red_and_green";
     store.settings.themeAuto = false;
     store.save();
   }
@@ -141,19 +141,19 @@ export default observer(() => {
               Dark
             </div>
           </Option>
-          <Option onClick={() => themeset("Blue")} className="Blue">
+          <Option onClick={() => themeset("blue_and_orange")} className="Blue">
             <div style={{ border: "1px solid #0000FF", backgroundColor: "#0026ff", borderRadius: "50%", display: "flex", height: "3rem", marginBottom: ".50rem", width: "3rem" }}></div>
             <div>
               Blue/Orange
             </div>
           </Option>
-          <Option onClick={() => themeset("Lavender")} className="Lavender">
+          <Option onClick={() => themeset("purple_and_yellow")} className="purple_and_yellow">
             <div style={{ border: "1px solid rgb(95, 99, 104)", backgroundColor: "#b500fc", borderRadius: "50%", display: "flex", height: "3rem", marginBottom: ".50rem", width: "3rem" }}></div>
             <div>
               Purple/Yellow
             </div>
           </Option>
-          <Option onClick={() => themeset("Red_and_Green")} className="Green_and_Yellow">
+          <Option onClick={() => themeset("red_and_green")} className="Green_and_Yellow">
             <div style={{ border: "1px solid rgb(95, 99, 104)", backgroundColor: "#b500fc", borderRadius: "50%", display: "flex", height: "3rem", marginBottom: ".50rem", width: "3rem" }}></div>
             <div>
               Green/Red

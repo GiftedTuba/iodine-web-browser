@@ -78,7 +78,7 @@ export const DEFAULT_SEARCH_ENGINES = [
 ];
 
 export const DEFAULT_SETTINGS: ISettings = {
-  theme: 'midori-light',
+  theme: 'Iodine-light',
   darkContents: false,
   shield: true,
   multrin: true,

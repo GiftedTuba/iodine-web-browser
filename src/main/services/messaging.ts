@@ -148,7 +148,7 @@ export const runMessagingService = (appWindow: AppWindow) => {
 
         if (item && item.type === 'password') {
           // item.fields.password = await getPassword(
-          //   'Midori',
+          //   'Iodine',
           //   `${hostname}-${item.fields.username}`,
           // );
         }
@@ -214,7 +214,7 @@ export const runMessagingService = (appWindow: AppWindow) => {
         );
       }
 
-      // await setPassword('Midori', `${hostname}-${username}`, password);
+      // await setPassword('Iodine', `${hostname}-${username}`, password);
 
       appWindow.send(`has-credentials-${view.id}`, true);
     });
@@ -230,7 +230,7 @@ export const runMessagingService = (appWindow: AppWindow) => {
         },
       });
 
-      // await deletePassword('Midori', `${view.hostname}-${fields.username}`);
+      // await deletePassword('Iodine', `${view.hostname}-${fields.username}`);
 
       appWindow.viewManager.settingsView.webContents.send(
         'credentials-remove',
@@ -241,7 +241,7 @@ export const runMessagingService = (appWindow: AppWindow) => {
     ipcMain.on(
       'credentials-get-password',
       async (e, id: string, account: string) => {
-        // const password = await getPassword('Midori', account);
+        // const password = await getPassword('Iodine', account);
         // e.sender.send(id, password);
       },
     );

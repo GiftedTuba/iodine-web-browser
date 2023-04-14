@@ -1,5 +1,5 @@
 {
-  "appId": "org.midoribrowser.midoring",
+  "appId": "org.Iodinebrowser.Iodineng",
   "productName": "Iodine Browser",
   "nsis": {
     "include": "static/installer.nsh"

@@ -23,7 +23,7 @@ Iodine is a cool, modern web browser of the future that runs just as well on lit
 - **Tab groups** - Easily group tabs, so it's hard to get lost.
 - **Scrollable tabs**
 - **Partial support for Chrome extensions** - Install some extensions directly from Chrome Web Store.
-- **Packages** - Extend Midori Browser for your needs, by installing or developing your own packages and themes.
+- **Packages** - Extend Iodine Browser for your needs, by installing or developing your own packages and themes.
 
 # Screenshots
 

@@ -188,7 +188,7 @@ export class StorageService {
         type: 'warning',
         title: `Clear Permissions`,
         message: `Succesfully erased Permission Database`,
-        detail: `The Permision database for all websites have been cleared. Midori needs to be restarted to accept or deny permission requests.`,
+        detail: `The Permision database for all websites have been cleared. Iodine needs to be restarted to accept or deny permission requests.`,
         buttons: ['Ok'],
       });
     });
