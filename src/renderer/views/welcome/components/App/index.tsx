@@ -129,31 +129,31 @@ export default observer(() => {
         <Favicon></Favicon>
         <Description style={{fontSize: "1.5rem", fontWeight: 500, margin: 0, marginBottom: "48px", opacity: '1' }}>Pick a theme!</Description>
         <div style={{ display: 'flex', width: "550px", justifyContent: "space-around" }}>
-          <Option onClick={() => themeset("Light")} className="Light">
+          <Option onClick={() => themeset("lightTheme")} className="Light">
             <div style={{ border: "1px solid rgb(95, 99, 104)", backgroundColor: "#fff", borderRadius: "50%", display: "flex", height: "3rem", marginBottom: ".50rem", width: "3rem" }}></div>
             <div>
               Light
             </div>
           </Option>
-          <Option onClick={() => themeset("Dark")} className="Dark">
+          <Option onClick={() => themeset("darkTheme")} className="Dark">
             <div style={{ border: "1px solid rgb(95, 99, 104)", backgroundColor: "rgb(95, 99, 104)", borderRadius: "50%", display: "flex", height: "3rem", marginBottom: ".50rem", width: "3rem" }}></div>
             <div>
               Dark
             </div>
           </Option>
-          <Option onClick={() => themeset("blue_and_orange")} className="Blue">
+          <Option onClick={() => themeset("Pink_theme")} className="Blue">
             <div style={{ border: "1px solid #0000FF", backgroundColor: "#0026ff", borderRadius: "50%", display: "flex", height: "3rem", marginBottom: ".50rem", width: "3rem" }}></div>
             <div>
               Blue/Orange
             </div>
           </Option>
-          <Option onClick={() => themeset("purple_and_yellow")} className="purple_and_yellow">
+          <Option onClick={() => themeset("purple_and_yellow_theme")} className="purple_and_yellow">
             <div style={{ border: "1px solid rgb(95, 99, 104)", backgroundColor: "#b500fc", borderRadius: "50%", display: "flex", height: "3rem", marginBottom: ".50rem", width: "3rem" }}></div>
             <div>
               Purple/Yellow
             </div>
           </Option>
-          <Option onClick={() => themeset("red_and_green")} className="Green_and_Yellow">
+          <Option onClick={() => themeset("red_and_green_theme")} className="Green_and_Yellow">
             <div style={{ border: "1px solid rgb(95, 99, 104)", backgroundColor: "#b500fc", borderRadius: "50%", display: "flex", height: "3rem", marginBottom: ".50rem", width: "3rem" }}></div>
             <div>
               Green/Red

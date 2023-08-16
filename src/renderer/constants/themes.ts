@@ -74,37 +74,37 @@ export const darkTheme: ITheme = {
   accentColor: BLUE_500,
 };
 
-export const blue_and_orange_theme: ITheme = {
-  'titlebar.backgroundColor': '#FFAc00', /* Orange */
-  'addressbar.backgroundColor': '#FFAc00', /* Orange */
-  'addressbar.textColor': '#002aff', /* Blue */
-  'toolbar.backgroundColor': '#002aff', /* Blue */
-  'toolbar.bottomLine.backgroundColor': '#002aff', /* Blue */
+export const Pink_theme: ITheme = {
+  'titlebar.backgroundColor': '#fcb5b9', /* Light Pink */
+  'addressbar.backgroundColor': '#fcb5b9', /* Light Pink */
+  'addressbar.textColor': '#d86a6f', /* Pink */
+  'toolbar.backgroundColor': '#d86a6f', /* Pink */
+  'toolbar.bottomLine.backgroundColor': '#d86a6f', /* Pink */
   'toolbar.lightForeground': true,
-  'toolbar.separator.color': '#002aff', /* Blue */
-  'tab.selected.textColor': '#FFAC00', /* Orange */
-  'tab.textColor': '#002aff', /* Blue */
-  'control.backgroundColor': '#FFAC00', /* Orange */
-  'control.hover.backgroundColor': '#FFAc00', /* Orange */
-  'control.valueColor': '#002aff', /* Blue */
+  'toolbar.separator.color': '#d86a6f', /* Pink */
+  'tab.selected.textColor': '#fcb5b9', /* Light Pink */
+  'tab.textColor': '#d86a6f', /* Pink */
+  'control.backgroundColor': '#fcb5b9', /* Light Pink */
+  'control.hover.backgroundColor': '#fcb5b9', /* Light Pink */
+  'control.valueColor': '#d86a6f', /* Pink */
   'control.lightIcon': true,
-  'switch.backgroundColor': '#FFAc00', /* Orange */
-  'dialog.backgroundColor': '#002aff', /* Blue */
-  'dialog.separator.color': '#002aff', /* Blue */
-  'dialog.textColor': '#FFAc00', /* Orange */
+  'switch.backgroundColor': '#fcb5b9', /* Light Pink */
+  'dialog.backgroundColor': '#d86a6f', /* Pink */
+  'dialog.separator.color': '#d86a6f', /* Pink */
+  'dialog.textColor': '#fcb5b9', /* Light Pink */
   'dialog.lightForeground': true,
-  'searchBox.backgroundColor': '#002aff', /* Blue */
+  'searchBox.backgroundColor': '#d86a6f', /* Pink */
   'searchBox.lightForeground': true,
-  'pages.backgroundColor': '#002aff', /* Blue */
+  'pages.backgroundColor': '#d86a6f', /* Pink */
   'pages.lightForeground': true,
-  'pages.textColor': 'FFAC00', /* Orange */
-  'dropdown.backgroundColor': '#002aff', /* Blue */
-  'dropdown.backgroundColor.translucent': '#002aff', /* Blue */
-  'dropdown.separator.color': '#002aff', /* Blue */
-  'pages.navigationDrawer1.backgroundColor': '#002aff', /* Blue */
-  'pages.navigationDrawer2.backgroundColor': '#002aff', /* Blue */
+  'pages.textColor': 'FFAC00', /* Light Pink */
+  'dropdown.backgroundColor': '#d86a6f', /* Pink */
+  'dropdown.backgroundColor.translucent': '#d86a6f', /* Pink */
+  'dropdown.separator.color': '#d86a6f', /* Pink */
+  'pages.navigationDrawer1.backgroundColor': '#d86a6f', /* Pink */
+  'pages.navigationDrawer2.backgroundColor': '#d86a6f', /* Pink */
 
-  backgroundColor: '#FFAC00', /* Orange */
+  backgroundColor: '#fcb5b9', /* Light Pink */
   accentColor: BLUE_500,
 };
 
