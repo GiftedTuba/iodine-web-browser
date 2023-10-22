@@ -13,7 +13,7 @@
   ],
   "homepage": "https://github.com/matthewmyles/Iodine-desktop/",
   "main": "build/main.bundle.js",
-  "author": "Astian, Inc <contact@astian.org>",
+  "author": "GiftedTuba",
   "repository": {
     "type": "git",
     "url": "https://gitlab.com/Iodine-web/iodine-web-browser.git"

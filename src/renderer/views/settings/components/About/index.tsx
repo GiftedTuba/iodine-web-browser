@@ -19,17 +19,9 @@ const Location = observer(() => {
         built in Ad Blocker. Iodine is happily made by GiftedTuba, and special thanks to Astian Inc. For contributing to code to the base of Iodine. Of course, we also
         thanks to all our other contributers...
         <p></p>
-        <Title>Iodine - Original Fork</Title>
+        <Title>Midori - Original Fork</Title>
         <p></p>
         <Title>Wexond - Original, Original Fork</Title>
-        <p></p>
-        <Title>Preknowledge - Contributer</Title>
-        <p></p>
-        <Title>JOshua - Graphic Designer</Title>
-        <p></p>
-        <Title> Mauro - Contributer</Title>
-        <p></p>
-        <Title>HzzaAwesome - Graphic Designer</Title>
         <p></p>
         <p></p>
       </Title>
