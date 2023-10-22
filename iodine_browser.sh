@@ -1,3 +1,3 @@
 #!/bin/bash
-cd ~/iodine-web-browser
+cd ~/Applications/iodine-web-browser
 npm start
