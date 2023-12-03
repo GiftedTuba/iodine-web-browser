@@ -103,6 +103,16 @@ const addDefault = () => {
   nextPage()
 }
 
+/* Basically what this does is it adds the pages, along with everything inside them, on the iodine welcome page, that can be triggered
+when opening iodine for the first time (When there's no user data logged) or by entering iodine://welcome in the url bar. To add a new
+page, make sure that you have the banner set number, for example <StyledSection className="banner()"> should have a unique number, but
+in between other numbers, numerically. So if I wanted my page to be second, it would be banner2, I just have to make sure that nobody
+else is using banner2, and that the pages are all in order of banner numbers. */
+
+/* Note: To fix bug with theme selection in welcome page, maybe remove store.settings.theme = "wexond-dark"; */
+
+/* To-do: Add Function that defines language variable */
+
 export default observer(() => {
 
   window.onload = function() {

@@ -5,6 +5,7 @@ import { observer } from 'mobx-react-lite';
 
 import { SettingsSection } from '../../store';
 import { Appearance } from '../Appearance';
+import { Language } from '../Language';
 import { AddressBar, ManageSearchEngines } from '../AddressBar';
 import { Privacy } from '../Privacy';
 import { About } from '../About';
@@ -241,13 +242,16 @@ export default observer(() => {
           <MenuItem icon={ICON_PALETTE} section="appearance">
             Appearance
           </MenuItem>
+          <MenuItem icon={ICON_EDIT} section="language">
+            Language
+          </MenuItem>
           {process.env.ENABLE_AUTOFILL && (
             <MenuItem icon={ICON_AUTOFILL} section="autofill">
               Autofill
             </MenuItem>
           )}
           <MenuItem icon={ICON_POWER} section="startup">
-            On startup
+            On Startup
           </MenuItem>
           <MenuItem
             icon={ICON_SEARCH}
@@ -277,6 +281,7 @@ export default observer(() => {
         <Content>
           <LeftContent style={{ maxWidth: 800, marginTop: 56 }}>
             {selectedSection === 'appearance' && <Appearance />}
+            {selectedSection === 'language' && <Language />}
             {selectedSection === 'autofill' && process.env.ENABLE_AUTOFILL && (
               <Autofill />
             )}

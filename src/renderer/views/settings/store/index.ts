@@ -10,12 +10,12 @@ import { Textfield } from '~/renderer/components/Textfield';
 
 export type SettingsSection =
   | 'appearance'
+  | 'language'
   | 'autofill'
   | 'address-bar'
   | 'privacy'
   | 'permissions'
   | 'startup'
-  | 'language'
   | 'shortcuts'
   | 'downloads'
   | 'system'

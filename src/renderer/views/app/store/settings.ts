@@ -9,12 +9,12 @@ import { Store } from '.';
 
 export type SettingsSection =
   | 'appearance'
+  | 'language'
   | 'autofill'
   | 'address-bar'
   | 'privacy'
   | 'permissions'
   | 'startup'
-  | 'language'
   | 'shortcuts'
   | 'downloads'
   | 'system';
