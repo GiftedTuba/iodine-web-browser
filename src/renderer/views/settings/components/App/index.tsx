@@ -242,9 +242,6 @@ export default observer(() => {
           <MenuItem icon={ICON_PALETTE} section="appearance">
             Appearance
           </MenuItem>
-          <MenuItem icon={ICON_EDIT} section="language">
-            Language
-          </MenuItem>
           {process.env.ENABLE_AUTOFILL && (
             <MenuItem icon={ICON_AUTOFILL} section="autofill">
               Autofill

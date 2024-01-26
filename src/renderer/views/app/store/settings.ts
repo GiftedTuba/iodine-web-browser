@@ -9,7 +9,6 @@ import { Store } from '.';
 
 export type SettingsSection =
   | 'appearance'
-  | 'language'
   | 'autofill'
   | 'address-bar'
   | 'privacy'
