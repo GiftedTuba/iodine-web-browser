@@ -25,7 +25,7 @@ const Location = observer(() => {
         <p></p>
         <p></p>
       </Title>
-      <Title>Did you know that Iodine is open source? Find it here at https://github.com/matthewmyles/iodine-web-browser</Title>
+      <Title>Did you know that Iodine is open source? Find it here at https://github.com/GiftedTuba/iodine-web-browser</Title>
     </Row>
   );
 });
@@ -34,7 +34,7 @@ export const About = () => {
   return (
     <>
       <Header>About Iodine</Header>
-      <Title>Your version of Iodine is 0.1.1
+      <Title>Your version of Iodine is 0.3.
       </Title>
       <Location />
     </>

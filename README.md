@@ -7,35 +7,19 @@ Iodine is a cool, modern web browser of the future that runs just as well on lit
 # Features
 
 - ***Privacy out of the box***
-  - Adblock filter list support
-  - Private browsing
-  - Manage cookies and scripts
+  - Ad and Tracker Blocking
+  - Private and secure browsing
+  - Manage all cookies and scripts
 <a/>
 
-- **Chromium without Google services and low resources usage** - Since we use Electron under the hood which is based on only several and the most important Chromium components, it's not bloated with redundant Google tracking services and others.
+- **Works Just as good as the rest** - Iodine is just as good as the other big browsers. It works fast, is customizable and private. It's also lightweight, not using many resources.
 
 - **Simple and Modern UI**
 
-- **Fast and fluent UI** - The animations are really smooth and their timings are perfectly balanced.
-
 - **Highly customizable new tab page** - Customize almost an every aspect of the new tab page!
 - **Customizable browser UI** - Choose whether it should have compact or normal UI.
-- **Tab groups** - Easily group tabs, so it's hard to get lost.
-- **Scrollable tabs**
-- **Partial support for Chrome extensions** - Install some extensions directly from Chrome Web Store.
+- **Tab groups** - Easily group tabs and choose their colors, so it's hard to get lost.
 - **Packages** - Extend Iodine Browser for your needs, by installing or developing your own packages and themes.
-
-# Screenshots
-
-![image](https://user-images.githubusercontent.com/11065386/81024159-d9388f80-8e72-11ea-85e7-6c30e3b66554.png)
-
-UI normal variant:
-![image](https://user-images.githubusercontent.com/11065386/81024186-f40b0400-8e72-11ea-976e-cd1ca1b43ad8.png)
-
-UI compact variant:
-![image](https://user-images.githubusercontent.com/11065386/81024222-13099600-8e73-11ea-9fc9-3c63a034403d.png)
-![image](https://user-images.githubusercontent.com/11065386/81024252-2ddc0a80-8e73-11ea-9f2f-6c9a4a175c60.png)
-
 
 # Contributing
 
