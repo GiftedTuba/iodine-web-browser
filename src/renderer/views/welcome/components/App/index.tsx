@@ -25,7 +25,6 @@ import { StyledButton } from '~/renderer/components/Button/styles';
 let page = 1
 let theme = "Light"
 
-store.settings.theme = "wexond-dark";
 
 const alreadyMaded = () => {
   nextPage()
@@ -52,7 +51,7 @@ const themeset = (mode: string) => {
     store.settings.theme = "wexond-light";
     store.settings.themeAuto = false;
     store.save();
-  } else if (theme =="Dark") {
+  } if (theme =="Dark") {
     document.getElementsByClassName("Light")[0].classList.remove("active")
     document.getElementsByClassName("Blue")[0].classList.remove("active")
     document.getElementsByClassName("purple_and_yellow")[0].classList.remove("active")
@@ -61,7 +60,7 @@ const themeset = (mode: string) => {
     store.settings.theme = "wexond-dark";
     store.settings.themeAuto = false;
     store.save();
-  } else if (theme =="Blue") {
+  } if (theme =="Blue") {
     document.getElementsByClassName("Light")[0].classList.remove("active")
     document.getElementsByClassName("purple_and_yellow")[0].classList.remove("active")
     document.getElementsByClassName("Dark")[0].classList.remove("active")
@@ -70,7 +69,7 @@ const themeset = (mode: string) => {
     store.settings.theme = "Iodine-blue";
     store.settings.themeAuto = false;
     store.save();
-  } else if (theme =="purple_and_yellow") {
+  } if (theme =="purple_and_yellow") {
     document.getElementsByClassName("Light")[0].classList.remove("active")
     document.getElementsByClassName("Blue")[0].classList.remove("active")
     document.getElementsByClassName("Dark")[0].classList.remove("active")
@@ -79,7 +78,7 @@ const themeset = (mode: string) => {
     store.settings.theme = "Iodine-purple_and_yellow";
     store.settings.themeAuto = false;
     store.save();
-  } else if (theme =="red_and_green") {
+  } if (theme =="red_and_green") {
     document.getElementsByClassName("Light")[0].classList.remove("active")
     document.getElementsByClassName("Blue")[0].classList.remove("active")
     document.getElementsByClassName("Dark")[0].classList.remove("active")
@@ -96,6 +95,10 @@ const commit = () => {
   store.settings.changelog = "10.0.2"
   store.save()
   window.location.replace(getWebUIURL('newtab'))
+}
+
+const headtosettings = () => {
+  window.location.replace(getWebUIURL('settings'))
 }
 
 const addDefault = () => {
@@ -146,7 +149,7 @@ export default observer(() => {
             </div>
           </Option>
           <Option onClick={() => themeset("darkTheme")} className="Dark">
-            <div style={{ border: "1px solid rgb(95, 99, 104)", backgroundColor: "rgb(95, 99, 104)", borderRadius: "50%", display: "flex", height: "3rem", marginBottom: ".50rem", width: "3rem" }}></div>
+            <div style={{ border: "1px solid rgb(95, 99, 104)", backgroundColor: "#5f6368", borderRadius: "50%", display: "flex", height: "3rem", marginBottom: ".50rem", width: "3rem" }}></div>
             <div>
               Dark
             </div>
@@ -224,6 +227,11 @@ export default observer(() => {
         <Description>Iodine is an incredible browser!</Description>
         <Title>Built-in adblocker and more.</Title>
         <Button theme={store.theme} onClick={commit}>Lets get started!</Button>
+        <Button theme={store.theme} onClick={headtosettings}>
+          <div style={{ marginTop: ".50rem" }}>
+            Or keep modifying settings!
+          </div>
+        </Button>
       </StyledSection>
     </ThemeProvider>
   );
